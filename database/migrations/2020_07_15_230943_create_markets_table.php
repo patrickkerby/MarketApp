@@ -16,11 +16,12 @@ class CreateMarketsTable extends Migration
         Schema::create('markets', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->integer('sort_order')->nullable();
             $table->char('name');
-            $table->char('city');
-            $table->char('postal_code');
-            $table->char('province');
-            $table->char('street_address');
+            $table->char('city')->nullable();
+            $table->char('postal_code')->nullable();
+            $table->char('province')->nullable();
+            $table->char('street_address')->nullable();
         });
     }
 

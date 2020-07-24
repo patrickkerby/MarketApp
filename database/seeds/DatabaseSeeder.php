@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             MarketsSeeder::class,
             MarketDaysSeeder::class,
             ProductsSeeder::class,
-            ProductQuantitiesSeeder::class,
+            ProductQuantitiesSeeder::class
         ]);
     }
 }
