@@ -84,4 +84,12 @@ class ProductsController extends Controller
             'category_id' => 'required' 
         ]);
     }
+
+    public function destroy(Products $product)
+    {
+
+        $product->delete();
+
+        return redirect('/products');
+    }
 }

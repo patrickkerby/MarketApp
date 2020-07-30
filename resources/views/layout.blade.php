@@ -66,6 +66,8 @@
         <ul>
           <li class="{{ Request::path() === 'markets' ? 'current_page_item' : '' }}"><a href="/markets">Markets</a></li>
           <li class="{{ Request::path() === 'products' ? 'current_page_item' : '' }}"><a href="/products">Products</a></li>
+          <li class="{{ Request::path() === 'categories' ? 'current_page_item' : '' }}"><a href="/categories">Categories</a></li>
+          <li class="{{ Request::path() === 'market_days' ? 'current_page_item' : '' }}"><a href="/market_days">Market Days</a></li>
         </ul>
       </nav>
       <div class="flex-center">

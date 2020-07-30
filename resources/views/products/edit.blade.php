@@ -39,8 +39,14 @@
 
           <div class="field">
             <div class="control">
-              <button class="button" type="submit">Update Product</button>
+              <button class="button" type="submit">Update Product</button>              
             </div>
+            <form method="POST" action="/products/product/{{ $product->id }}">
+              {{  csrf_field() }}
+              {{ method_field('DELETE') }}
+
+              <button type="submit">Delete</button>
+            </form>
 
           </div>
           
