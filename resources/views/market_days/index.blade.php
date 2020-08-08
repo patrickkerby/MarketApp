@@ -2,7 +2,7 @@
 
 @section('content')
     <div>
-      <a href="/market_days/create">Add new market day</a>
+      <a href="/market_days/create-setup" class="button">Add new market day</a>
     </div>
     <div class="content">
 

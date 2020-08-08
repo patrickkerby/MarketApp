@@ -2,7 +2,7 @@
 
 @section('content')
     <div>
-      <a href="/markets/create">Add new market</a>
+      <a href="/markets/create" class="button">Add new market</a>
     </div>
     <div class="content">
       <ul>

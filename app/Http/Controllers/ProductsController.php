@@ -11,7 +11,8 @@ class ProductsController extends Controller
     public function index()
     {
         $products = Products::latest()->get();
-        $categorized_products = Products::with('categories')->get()->groupBy('categories.name');        
+
+        $categorized_products = Products::with('categories')->get()->sortBy('categories.name')->groupBy('categories.name');        
         $keys = $categorized_products->keys();
 
         return view('products.index', [

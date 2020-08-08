@@ -9,7 +9,7 @@ class CategoriesController extends Controller
 {
     public function index()
     {
-        $categories = Categories::latest()->get()->sortBy('sort_order');
+        $categories = Categories::latest()->get()->sortBy('name');
         return view('categories.index', ['categories' => $categories]);
     }
 

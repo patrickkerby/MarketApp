@@ -16,10 +16,14 @@ class CreateProductQuantitiesTable extends Migration
         Schema::create('product_quantities', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('market_day_id');
+            // $table->integer('market_day_id');
+            $table->foreign('market_day_id')->references('id')->on('market_days');
+
             $table->decimal('packed', 5, 2)->nullable();
             $table->integer('product_id');
             $table->decimal('returned', 5, 2)->nullable();
+
+
         });
     }
 

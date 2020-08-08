@@ -48,8 +48,11 @@ Route::delete('categories/{category}', 'CategoriesController@destroy');
 
 // Route for Market Days index and individual pages
 Route::get('/market_days', 'MarketDaysController@index');
-Route::post('/market_days', 'MarketDaysController@store');
-Route::get('/market_days/create', 'MarketDaysController@create');
-Route::get('/market_days/setup', 'MarketDaysController@setup');
-Route::post('/market_days/setup', 'MarketDaysController@setup');
+// Route::post('/market_days', 'MarketDaysController@store');
+
+Route::get('/market_days/create-setup', 'MarketDaysController@createStep1');
+Route::post('/market_days/create-setup', 'MarketDaysController@postCreateStep1');
+Route::get('/market_days/create', 'MarketDaysController@createStep2');
+Route::post('/market_days/create', 'MarketDaysController@store');
+
 Route::get('/market_days/{market_day}', 'MarketDaysController@show')->name('market_days.show');

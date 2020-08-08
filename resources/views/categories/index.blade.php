@@ -2,7 +2,7 @@
 
 @section('content')
     <div>
-      <a href="/categories/create">Add new Category</a>
+      <a href="/categories/create" class="button">Add new Category</a>
     </div>
     <div class="content">
       <ul>

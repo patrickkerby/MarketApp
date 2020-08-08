@@ -2,7 +2,7 @@
 
 @section('content')
     <div>
-      <a href="/products/create">Add new product</a>
+      <a href="/products/create" class="button">Add new product</a>
     </div>
     <div class="">
 
