@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use App\Product_Quantities;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,7 +18,9 @@ class market_days extends Model
     public function product_quantities()
     {
         
-        return $this->hasMany('App\Product_Quantities', 'market_day_id');
+        return $this->hasMany(Product_Quantities::class, 'market_day_id');
+        
+
 
     }
 

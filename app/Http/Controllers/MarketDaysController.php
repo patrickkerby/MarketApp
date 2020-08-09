@@ -20,9 +20,12 @@ class MarketDaysController extends Controller
     {
         $markets = Markets::find($market_day->market_id);
 
+        $product_quantity_items = $market_day->product_quantities()->get();    
+
         return view('market_days.show', [
             'market_day' => $market_day,
-            'markets' => $markets
+            'markets' => $markets,
+            'product_quantities' => $product_quantity_items
         ]);
     }
 
@@ -143,21 +146,30 @@ class MarketDaysController extends Controller
                         $market_day->state = 1;
             
                         $market_day->save();
+                    
+                        foreach($product_quantities as $qty) {                
+                            if($qty['market_id'] == $item['market_id']) {
+
+                                $product_quantity = new product_quantities();
+            
+                                $product_quantity->product_id = $qty['product_id'];
+                                $product_quantity->packed = $qty['packed'];
+            
+                                $product_quantity->market_days()->associate($market_day);
+                    
+                                $product_quantity->save();
+
+                            }
+        
+                        }
+                    
+                    
                     }
-                }
 
-                foreach($product_quantities as $item) {                
-
-                    $product_quantity = new product_quantities();
-
-                    $product_quantity->product_id = $item['product_id'];
-                    $product_quantity->packed = $item['packed'];
-
-                    $product_quantity->market_days()->associate($market_day);
-         
-                    $product_quantity->save();
 
                 }
+
+                
         
                 $request->session()->flush();
 
