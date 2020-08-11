@@ -18,14 +18,12 @@ class market_days extends Model
     public function product_quantities()
     {
         
-        return $this->hasMany(Product_Quantities::class, 'market_day_id');
-        
-
+        return $this->hasMany('App\Product_Quantities', 'market_day_id');
 
     }
 
     public function products()
     {
-        return $this->hasManyThrough('App\Products', 'App\Product_Quantities');
+        return $this->hasManyThrough('App\Products', 'App\Product_Quantities', 'product_id', 'id');
     }
 }

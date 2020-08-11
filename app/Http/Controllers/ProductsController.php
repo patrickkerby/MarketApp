@@ -10,13 +10,10 @@ class ProductsController extends Controller
 {
     public function index()
     {
-        $products = Products::latest()->get();
-
         $categorized_products = Products::with('categories')->get()->sortBy('categories.name')->groupBy('categories.name');        
         $keys = $categorized_products->keys();
 
         return view('products.index', [
-            'products' => $products,
             'categorized_products' => $categorized_products,
             'keys' => $keys
         ]);

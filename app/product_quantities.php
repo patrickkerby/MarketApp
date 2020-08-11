@@ -13,9 +13,10 @@ class product_quantities extends Model
         return $this->belongsTo('App\market_days', 'market_day_id');
     }
 
-    public function product()
+    public function products()
     {        
         return $this->belongsTo('App\Products', 'product_id');
     }
 
 }
+

@@ -37,7 +37,10 @@
           <ul>
               @foreach($items as $item)
               <li>
-                <a href="/market_days/{{ $item->id }}"><strong>{{ $item->market->name }}</strong> - {{ $item->date }}</a>
+                <a href="/market_days/{{ $item->id }}/edit">
+                  <strong>{{ \Carbon\Carbon::parse($item->date)->format('F j, Y')}}</strong>:
+                  {{ $item->market->name }}
+                </a>
               </li>  
               @endforeach
           </ul>

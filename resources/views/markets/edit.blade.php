@@ -63,7 +63,6 @@
             <div class="control">
               <button class="button" type="submit">Update Market</button>
             </div>
-
           </div>
           
         </form>

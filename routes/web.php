@@ -54,5 +54,7 @@ Route::get('/market_days/create-setup', 'MarketDaysController@createStep1');
 Route::post('/market_days/create-setup', 'MarketDaysController@postCreateStep1');
 Route::get('/market_days/create', 'MarketDaysController@createStep2');
 Route::post('/market_days/create', 'MarketDaysController@store');
-
 Route::get('/market_days/{market_day}', 'MarketDaysController@show')->name('market_days.show');
+Route::get('/market_days/{market_day}/edit', 'MarketDaysController@edit');
+Route::put('/market_days/{market_day}', 'MarketDaysController@update');
+Route::delete('/market_days/{market_day}', 'MarketDaysController@destroy');

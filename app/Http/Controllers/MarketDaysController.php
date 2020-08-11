@@ -18,14 +18,19 @@ class MarketDaysController extends Controller
 
     public function show(Market_Days $market_day)
     {
-        $markets = Markets::find($market_day->market_id);
+        // $markets = Markets::find($market_day->market_id);
 
-        $product_quantity_items = $market_day->product_quantities()->get();    
+        $markets = $market_day->market();
 
+        $product_quantity_items = $market_day->product_quantities()->get();  
+  
+        $products = $market_day->products()->get();
+        
         return view('market_days.show', [
             'market_day' => $market_day,
             'markets' => $markets,
-            'product_quantities' => $product_quantity_items
+            'product_quantities' => $product_quantity_items,
+            'products' => $products
         ]);
     }
 
@@ -143,7 +148,7 @@ class MarketDaysController extends Controller
                         $market_day->market_id = $item['market_id'];
                         $market_day->date = $item['date'];
                         $market_day->admin_notes = $item['admin_notes'];
-                        $market_day->state = 1;
+                        $market_day->state = 0;
             
                         $market_day->save();
                     
@@ -160,32 +165,82 @@ class MarketDaysController extends Controller
                                 $product_quantity->save();
 
                             }
-        
                         }
-                    
-                    
                     }
-
-
-                }
-
-                
+                }                
         
                 $request->session()->flush();
 
                 return redirect('/market_days');
 
             break;
-    
         }
     }
 
+    public function edit(Market_Days $market_day)
+    {
+
+        $markets = $market_day->market();
+
+        $product_quantity_items = $market_day->product_quantities()->get();  
+  
+        $products = $market_day->products()->get();
+        
+        switch ($market_day->state) {
+
+            case '0':
+                $market_day->state = 'Draft';
+                break;
+            case '1':
+                $market_day->state = 'Ready To Pack';
+                break;
+            case '2':
+                $market_day->state = 'Packed';
+                break;
+            case '3':
+                $market_day->state = 'Returned';
+                break;
+            case '4':
+                $market_day->state = 'Completed';
+                break;
+    
+            }
+
+        return view('market_days.edit', [
+            'market_day' => $market_day,
+            'markets' => $markets,
+            'product_quantities' => $product_quantity_items,
+            'products' => $products
+        ]);
+
+    }
+
+    public function update(Market_Days $market_day)
+    {
+        $market_day->update($this->validateMarket_Days());
+        return redirect('/market_days');
+    }
+
+    protected function validateMarket_Days()
+    {
+        return request()->validate([
+            'date' => 'required',
+            'employee' =>'nullable',
+            'state' => 'required',
+            'admin_notes' => 'nullable',
+            'packing_notes' => 'nullable',
+            'market_notes' => 'nullable',
+        ]);
+    }
+
     // states are saved to the database as numbers, use these when referencing in objects
-    const state = [
-        'draft', // 0
-        'ready_to_pack', // 1
-        'packed', // 2
-        'returned', // 3
-        'completed' // 4
-    ];
+    // const state = [
+    //     'draft', // 0
+    //     'ready_to_pack', // 1
+    //     'packed', // 2
+    //     'returned', // 3
+    //     'completed' // 4
+    // ];
+
+
 }
