@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="content">        
+        
         <h1>{{ $market_day->market->name }} Market ({{ $market_day->state }})</h1>
         <h3>{{ \Carbon\Carbon::parse($market_day->date)->format('F j, Y')}}</h3>
         <form method="POST" action="/market_days/{{ $market_day->id }}">
@@ -26,7 +27,7 @@
                         @foreach($product_quantities as $item)
                             <tr>
                                 <td>{{ $item->products->name }}</td>
-                                <td><input name="packed[{{ $item->product_id }}][]" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed }}" @endisset /></td>
+                                <td><input name="packed[{{ $item->id }}]" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed }}" @endisset /></td>
                             </tr>
                         @endforeach
                             </tbody>
@@ -52,7 +53,7 @@
                         @foreach($product_quantities as $item)
                             <tr>
                                 <td>{{ $item->products->name }}</td>
-                                <td><input name="packed[{{ $item->product_id }}][]" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed }}" @endisset /></td>
+                                <td><input name="packed[{{ $item->id }}]" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed }}" @endisset /></td>
                             </tr>
                         @endforeach
                             </tbody>
@@ -74,6 +75,8 @@
                     @break
 
                 @case('Packed')
+                    
+                    <p>Now that market is over, count how many of each product is leftover, and report it below!</p>
                     <section class="products">
                         <table>
                             <thead>
@@ -88,7 +91,7 @@
                             <tr>
                                 <td>{{ $item->products->name }}</td>
                                 <td>{{ $item->packed }}</td>
-                                <td><input name="packed[{{ $item->product_id }}][]" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed }}" @endisset /></td>
+                                <td><input name="returned[{{ $item->id }}]" type="number" step="0.25" max="{{ $item->packed }}" value="" /></td>
                             </tr>
                         @endforeach
                             </tbody>
@@ -117,6 +120,27 @@
                     @break
 
                 @case('Returned')
+                    <section class="products">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td><h4>Product</h4></td>
+                                    <td><h4>Packed</h4></td>
+                                    <td><h4>Returned</h4></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        @foreach($product_quantities as $item)
+                            <tr>
+                                <td>{{ $item->products->name }}</td>
+                                <td>{{ $item->packed }}</td>
+                                <td>{{ $item->returned }}</td>
+                            </tr>
+                        @endforeach
+                            </tbody>
+                        </table>
+                    </section>
+
                     @if($market_day->admin_notes)
                         <div>
                             <strong>Admin Notes:</strong>
@@ -143,13 +167,43 @@
                         <strong>Actual Revenue:</strong>
                         <input name="actual_revenue" type="number" @isset($item->actual_revenue) value="{{ $item->actual_revenue }}" @endisset />
                     </div>
-                    <input type="hidden" name="state" value="4  " />
+                    <input type="hidden" name="state" value="4" />
                     <button class="button" type="submit">Complete this Market!</button>
 
                     @break
                     
             @endswitch
+        </form>
 
+        <form method="POST" action="/market_days/{{ $market_day->id }}">
+            {{ csrf_field() }}
+            @method('PUT')
+
+            @switch($market_day->state)
+                @case('Ready To Pack')
+                    <input type="hidden" name="state" value="0" />
+                    <button type="submit">Revert to Draft</button>
+                @break
+                @case('Packed')
+                    <input type="hidden" name="state" value="1" />
+                    <button type="submit">Revert to "Ready to Pack"</button>
+                @break
+                @case('Returned')
+                    <input type="hidden" name="state" value="2" />
+                    <button type="submit">Revert to "Packed"</button>
+                @break
+                @case('Completed')
+                    <input type="hidden" name="state" value="3" />
+                    <button type="submit">Revert to "Returned"</button>
+                @break
+            @endswitch
+        </form>
+
+        <form method="POST" action="/market_days/{{ $market_day->id }}">
+            {{ csrf_field() }}
+            {{ method_field('DELETE') }}
+
+            <button type="submit">Delete</button>
         </form>
     </div>
 @endsection

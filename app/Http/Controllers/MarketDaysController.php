@@ -7,6 +7,7 @@ use App\Markets;
 use App\product_quantities;
 use App\Products;
 use Illuminate\Http\Request;
+use PhpParser\Node\Expr\Isset_;
 
 class MarketDaysController extends Controller
 {
@@ -18,8 +19,6 @@ class MarketDaysController extends Controller
 
     public function show(Market_Days $market_day)
     {
-        // $markets = Markets::find($market_day->market_id);
-
         $markets = $market_day->market();
 
         $product_quantity_items = $market_day->product_quantities()->get();  
@@ -177,7 +176,7 @@ class MarketDaysController extends Controller
         }
     }
 
-    public function edit(Market_Days $market_day)
+    public function edit(Market_Days $market_day, Request $request)
     {
 
         $markets = $market_day->market();
@@ -199,11 +198,16 @@ class MarketDaysController extends Controller
                 break;
             case '3':
                 $market_day->state = 'Returned';
+
+                $market_day->estimated_revenue = 0;
+                foreach($product_quantity_items as $item) {
+                    $market_day->estimated_revenue += $item->products->price * ($item->packed - $item->returned);                     
+                }                
+
                 break;
             case '4':
                 $market_day->state = 'Completed';
                 break;
-    
             }
 
         return view('market_days.edit', [
@@ -215,10 +219,40 @@ class MarketDaysController extends Controller
 
     }
 
-    public function update(Market_Days $market_day)
+    public function update(Market_Days $market_day, Request $request)
     {
+        $products_returned = $request->returned;
+        $products_packed = $request->packed;
+        $state_change = $request->state;
+
+        if (isset($products_packed)) {
+            foreach($products_packed as $key => $qty) {   
+
+                $existing_product_quantity = $market_day->product_quantities()->find($key);  
+
+                $existing_product_quantity->packed = $qty;
+                $existing_product_quantity->save();            
+            }
+        }
+
+        if (isset($products_returned)) {
+            foreach($products_returned as $key => $qty) {   
+
+                $existing_product_quantity = $market_day->product_quantities()->find($key);  
+                
+                $existing_product_quantity->returned = $qty;
+                $existing_product_quantity->save();
+            }
+        }
+        
+        $market_day->state = $state_change;
+
+        $market_day->save();
+
         $market_day->update($this->validateMarket_Days());
-        return redirect('/market_days');
+
+        return redirect($market_day->path());
+
     }
 
     protected function validateMarket_Days()
@@ -242,5 +276,12 @@ class MarketDaysController extends Controller
     //     'completed' // 4
     // ];
 
+    public function destroy(Market_Days $market_day)
+    {
+
+        $market_day->delete();
+
+        return redirect('/market_days');
+    }
 
 }
