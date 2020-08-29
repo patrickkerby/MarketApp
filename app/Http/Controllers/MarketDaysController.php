@@ -198,12 +198,6 @@ class MarketDaysController extends Controller
                 break;
             case '3':
                 $market_day->state = 'Returned';
-
-                $market_day->estimated_revenue = 0;
-                foreach($product_quantity_items as $item) {
-                    $market_day->estimated_revenue += $item->products->price * ($item->packed - $item->returned);                     
-                }                
-
                 break;
             case '4':
                 $market_day->state = 'Completed';
@@ -223,6 +217,7 @@ class MarketDaysController extends Controller
     {
         $products_returned = $request->returned;
         $products_packed = $request->packed;
+        $product_quantity_items = $market_day->product_quantities()->get();  
         $state_change = $request->state;
 
         if (isset($products_packed)) {
@@ -245,13 +240,18 @@ class MarketDaysController extends Controller
             }
         }
         
+        $market_day->estimated_revenue = 0;
+        foreach($product_quantity_items as $item) {
+            $market_day->estimated_revenue += $item->products->price * ($item->packed - $item->returned);                     
+        }
+
         $market_day->state = $state_change;
 
         $market_day->save();
 
         $market_day->update($this->validateMarket_Days());
 
-        return redirect($market_day->path());
+        return redirect()->back();
 
     }
 
@@ -264,6 +264,7 @@ class MarketDaysController extends Controller
             'admin_notes' => 'nullable',
             'packing_notes' => 'nullable',
             'market_notes' => 'nullable',
+            'actual_revenue' => 'nullable'
         ]);
     }
 

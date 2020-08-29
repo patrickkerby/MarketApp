@@ -19,6 +19,7 @@
                 font-weight: 200;
                 height: 100vh;
                 margin: 0;
+                padding-bottom: 6rem;
             }
             #page {
               display: flex;

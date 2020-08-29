@@ -17,18 +17,25 @@
         <table> 
             <thead>
                 <tr>
-                    <td><h4>Product</h4></td>
-                    <td><h4>Packed</h4></td>
+                    <th><h4>Product</h4></th>
+                    <th><h4>Packed</h4></th>
+                    <th><h4>Returned</h4></th>
+                    <th><h4>Sold</h4></th>
+                    <th><h4>~Revenue</h4></th>
                 </tr>
             </thead>
             <tbody>
         @foreach($product_quantities as $item)
             <tr>
                 <td>{{ $item->products->name }}</td>
-                <td><strong>Packed:</strong> {{ $item->packed }}</td>
+                <td>{{ $item->packed }}</td>
+                <td>{{ $item->returned }}</td>
+                <td>{{ $item->packed - $item->returned }}</td>
+                <td>${{ $item->products->price * ($item->packed - $item->returned) }}</td>
             </tr>
         @endforeach
             </tbody>
         </table>
+        <a href="edit/">Edit</a>
     </div>
 @endsection
