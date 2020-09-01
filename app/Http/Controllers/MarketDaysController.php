@@ -7,6 +7,7 @@ use App\Markets;
 use App\product_quantities;
 use App\Products;
 use Illuminate\Http\Request;
+use GNAHotelSolutions\Weather\Weather;
 use PhpParser\Node\Expr\Isset_;
 
 class MarketDaysController extends Controller
@@ -219,6 +220,8 @@ class MarketDaysController extends Controller
         $products_packed = $request->packed;
         $product_quantity_items = $market_day->product_quantities()->get();  
         $state_change = $request->state;
+        $weather = new Weather();
+        $currentWeather = json_decode($weather->get('edmonton,ca'));
 
         if (isset($products_packed)) {
             foreach($products_packed as $key => $qty) {   
@@ -243,6 +246,11 @@ class MarketDaysController extends Controller
         $market_day->estimated_revenue = 0;
         foreach($product_quantity_items as $item) {
             $market_day->estimated_revenue += $item->products->price * ($item->packed - $item->returned);                     
+        }
+
+        if (isset($currentWeather)) {
+            $market_day->weather = $currentWeather->main->temp;
+            $market_day->wind = $currentWeather->wind->speed;
         }
 
         $market_day->state = $state_change;

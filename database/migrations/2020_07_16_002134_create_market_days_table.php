@@ -26,6 +26,8 @@ class CreateMarketDaysTable extends Migration
             $table->text('admin_notes')->nullable();
             $table->float('estimated_revenue')->nullable();
             $table->float('actual_revenue')->nullable();
+            $table->text('weather')->nullable();
+            $table->text('wind')->nullable();
             $table->integer('state');
         });
     }

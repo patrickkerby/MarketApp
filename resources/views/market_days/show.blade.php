@@ -1,6 +1,9 @@
 @extends('layout')
 
 @section('content')
+
+{{-- {{ $currentWeatherInEdmonton }} --}}
+
     <div class="content">        
         <h2>{{ $market_day->market->name }} ({{ $market_day->date }})</h2>
         <ul>
@@ -12,6 +15,8 @@
             <li><strong>Estimated Revenue:</strong> {{ $market_day->estimated_revenue }}</li>
             <li><strong>Actual Revenue:</strong> {{ $market_day->actual_revenue }}</li>
             <li><strong>State:</strong> {{ $market_day->state }}</li>
+            <li><strong>Temperature:</strong> {{ $market_day->weather }}&#176;C</li>            
+            <li><strong>Wind gust speed:</strong> {{ $market_day->wind * 3.6 }} km/h</li>            
         </ul>
 
         <table> 

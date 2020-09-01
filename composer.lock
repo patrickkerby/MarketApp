@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6558f74828bca9ebecac73d90cea4b1a",
+    "content-hash": "1a0e90fc2d1ba135259394c08b965f74",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -509,6 +509,67 @@
                 "laravel"
             ],
             "time": "2020-04-28T08:47:37+00:00"
+        },
+        {
+            "name": "gnahotelsolutions/laravel-weather",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gnahotelsolutions/laravel-weather.git",
+                "reference": "19853dac0f19fec46e639d0afa77c8b170ca6457"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gnahotelsolutions/laravel-weather/zipball/19853dac0f19fec46e639d0afa77c8b170ca6457",
+                "reference": "19853dac0f19fec46e639d0afa77c8b170ca6457",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.4",
+                "illuminate/support": "5.8.*|6.*|7.*",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "3.8.*|4.*|5.*",
+                "phpunit/phpunit": "^7.0|^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "GNAHotelSolutions\\Weather\\WeatherServiceProvider"
+                    ],
+                    "aliases": {
+                        "Weather": "GNAHotelSolutions\\Weather\\WeatherFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GNAHotelSolutions\\Weather\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Llop",
+                    "email": "dllop@gnahs.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "🌤️ A wrapper around Open Weather Map to get the current weather on a location.",
+            "homepage": "https://github.com/gnahotelsolutions/weather",
+            "keywords": [
+                "OpenWeatherMap",
+                "api",
+                "gnahotelsolutions",
+                "laravel",
+                "weather"
+            ],
+            "time": "2020-05-27T08:02:35+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
