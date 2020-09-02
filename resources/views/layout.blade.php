@@ -2,112 +2,62 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
         <title>Riverbend Gardens Market App</title>
 
         <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://use.typekit.net/thb0pbt.css">
+        <script src="https://kit.fontawesome.com/0e629dcd9e.js" crossorigin="anonymous"></script>
 
         <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-                padding-bottom: 6rem;
-            }
-            #page {
-              display: flex;
-              flex-direction: column;
-              padding-bottom: 6rem;
-            }
-            .full-height {
-                height: 100vh;
-            }
+        <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
 
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            section {
-              margin: 3rem 0;
-            }
-            .title {
-                font-size: 84px;
-            }
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-
-            .button {
-              text-decoration: none;
-              display: inline-flex;
-              padding: 0.5rem 2rem;
-              border-radius: 2rem;
-              background: #636b6f;
-              color: #fff;
-              font-weight: bold;
-              margin: 0 0.5rem;
-            }
-
-            .edit {
-              display: inline-flex;
-              align-self: flex-end;
-              font-size: 0.85rem;
-              margin: 1.25rem 0;
-              position: absolute;
-              top: 1rem;
-              right: 1rem;
-            }
-
-            form {
-              display: flex;
-              flex-direction: column;
-              /* position: relative; */
-            }
-            textarea {
-              margin-bottom: 2rem;
-              width: 100%;
-            }
-
-        </style>
     </head>
-    <body>
-      <nav>
-        <ul>
-          <li class="{{ Request::path() === 'markets' ? 'current_page_item' : '' }}"><a href="/markets">Markets</a></li>
-          <li class="{{ Request::path() === 'products' ? 'current_page_item' : '' }}"><a href="/products">Products</a></li>
-          <li class="{{ Request::path() === 'categories' ? 'current_page_item' : '' }}"><a href="/categories">Categories</a></li>
-          <li class="{{ Request::path() === 'market_days' ? 'current_page_item' : '' }}"><a href="/market_days">Market Days</a></li>
-        </ul>
+    <body class="@yield('class')">
+
+      <nav class="navbar navbar-default">
+        <!-- Collapsed Hamburger -->
+
+        <div class="collapse navbar-collapse" id="app-navbar-collapse">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
+            <i class="fas fa-chevron-right"></i>  
+            <span class="sr-only">Toggle Navigation</span>                    
+          </button>
+          <!-- Left Side Of Navbar -->
+          <ul class="nav navbar-nav">
+            <li class="market_days {{ Request::path() === 'market_days' ? 'current_page_item' : '' }}"><i class="fas fa-map-marker-alt"></i><a href="/market_days">Market Days</a></li>
+            <li class="markets {{ Request::path() === 'markets' ? 'current_page_item' : '' }}"><i class="fas fa-sun"></i><a href="/markets">Markets</a></li>
+            <li class="products {{ Request::path() === 'products' ? 'current_page_item' : '' }}"><i class="fas fa-shopping-basket"></i><a href="/products">Products</a></li>
+            {{-- <li class="{{ Request::path() === 'categories' ? 'current_page_item' : '' }}"><a href="/categories">Categories</a></li> --}}
+          </ul>
+          <a class="hamburg" href="#">
+            <i class="fas fa-bars"></i>
+          </a>
+         
+
+          {{-- <!-- Right Side Of Navbar -->
+          <ul class="navbar-right">
+              <!-- Authentication Links -->
+              @if (Auth::guest())
+                  <li><a href="{{ url('/login') }}">Login</a></li>
+              @else
+                  <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                          {{ Auth::user()->name }} <span class="caret"></span>
+                      </a>
+
+                      <ul class="dropdown-menu" role="menu">
+                          <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                      </ul>
+                  </li>
+              @endif
+          </ul> --}}
+        </div>
       </nav>
-      <div class="flex-center">
+
+      <div class="container-fluid">
         @if (Route::has('login'))
           <div class="top-right links">
             @auth
@@ -122,9 +72,14 @@
           </div>
         @endif
       
-        <div class="content">
+        <div class="content row justify-content-center">
           @yield('content')
         </div>
       </div>
+
+      <!-- JavaScripts -->
+      
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="{{ elixir('/js/app.js') }}"></script>
     </body>
 </html>

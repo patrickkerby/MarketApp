@@ -25,6 +25,25 @@ class MarketDaysController extends Controller
         $product_quantity_items = $market_day->product_quantities()->get();  
   
         $products = $market_day->products()->get();
+
+        switch ($market_day->state) {
+
+            case '0':
+                $market_day->state = 'Draft';
+                break;
+            case '1':
+                $market_day->state = 'Ready To Pack';
+                break;
+            case '2':
+                $market_day->state = 'Packed';
+                break;
+            case '3':
+                $market_day->state = 'Returned';
+                break;
+            case '4':
+                $market_day->state = 'Completed';
+                break;
+            }
         
         return view('market_days.show', [
             'market_day' => $market_day,
@@ -59,7 +78,6 @@ class MarketDaysController extends Controller
         $data = $request->session()->all();
 
         // $request->session()->flush();
-
 
         return view('market_days.create-setup', [
             'markets' => $markets,
@@ -185,6 +203,10 @@ class MarketDaysController extends Controller
         $product_quantity_items = $market_day->product_quantities()->get();  
   
         $products = $market_day->products()->get();
+
+        if($market_day->admin_notes || $market_day->packing_notes || $market_day->market_notes) {
+            $has_notes = true;
+        }
         
         switch ($market_day->state) {
 
@@ -209,7 +231,8 @@ class MarketDaysController extends Controller
             'market_day' => $market_day,
             'markets' => $markets,
             'product_quantities' => $product_quantity_items,
-            'products' => $products
+            'products' => $products,
+            'has_notes' => $has_notes
         ]);
 
     }
@@ -220,6 +243,10 @@ class MarketDaysController extends Controller
         $products_packed = $request->packed;
         $product_quantity_items = $market_day->product_quantities()->get();  
         $state_change = $request->state;
+        $employee = $request->employee;
+        $admin_notes = $request->admin_notes;
+        $packing_notes = $request->packing_notes;
+        $market_notes = $request->market_notes;
         $weather = new Weather();
         $currentWeather = json_decode($weather->get('edmonton,ca'));
 
@@ -251,6 +278,19 @@ class MarketDaysController extends Controller
         if (isset($currentWeather)) {
             $market_day->weather = $currentWeather->main->temp;
             $market_day->wind = $currentWeather->wind->speed;
+        }
+
+        if($admin_notes) {
+            $market_day->admin_notes = $admin_notes;
+        }
+        if($packing_notes) {
+            $market_day->packing_notes = $packing_notes;
+        }
+        if($market_notes) {
+            $market_day->market_notes = $market_notes;
+        }
+        if($employee) {
+            $market_day->employee = $employee;
         }
 
         $market_day->state = $state_change;

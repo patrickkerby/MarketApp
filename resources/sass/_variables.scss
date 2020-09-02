@@ -1,0 +1,64 @@
+// Body
+$body-bg: #fff;
+
+// Typography
+$font-family-sans-serif: 'Visby', sans-serif;
+$font-family-serif: shackleton-narrow, serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+// Colors
+$green: #7DB84C;
+$orange: #E26125;
+$black: #383838;
+$light-gray: #F4F4F4;
+
+//styles
+$box-shadow: 0 0 43px -5px rgba(203,203,203,0.36);
+$box-shadow-dark: 0 0 43px -5px rgba(203,203,203,0.66);
+$vertical-pipe: solid 2px $light-gray;
+
+@mixin slowfade($time: 0.4) {
+  -webkit-transition: all #{$time}s;
+  -moz-transition: all #{$time}s;
+  transition: all #{$time}s;
+}
+
+$visby-path: "../fonts/visby";
+$pitch-path: "../fonts/pitch";
+
+@font-face {
+  font-family: 'Visby';
+  font-style: normal;
+  font-display: auto;
+  font-weight: normal;
+  src: url('#{$visby-path}/VisbyCF-Bold.eot');
+  src: local("Visby CF Bold"), local("VisbyCF-Bold"), 
+      url('#{$visby-path}/VisbyCF-Bold.eot?#iefix') format("embedded-opentype"), 
+      url('#{$visby-path}/VisbyCF-Bold.woff2') format("woff2"), 
+      url('#{$visby-path}/VisbyCF-Bold.woff') format("woff"), 
+}
+
+@font-face {
+  font-family: 'Visby Demi';
+  font-style: normal;
+  font-display: auto;
+  font-weight: normal;
+  src: url('#{$visby-path}/VisbyCF-DemiBold.eot');
+  src: local("Visby CF DemiBold"), local("VisbyCF-DemiBold"), 
+      url('#{$visby-path}/VisbyCF-DemiBold.eot?#iefix') format("embedded-opentype"), 
+      url('#{$visby-path}/VisbyCF-DemiBold.woff2') format("woff2"), 
+      url('#{$visby-path}/VisbyCF-DemiBold.woff') format("woff"), 
+}
+
+@font-face {
+  font-family: 'pitch';
+  font-style: normal;
+  font-display: auto;
+  font-weight: normal;
+  src: url('#{$pitch-path}/PitchWeb-Medium.eot');
+  src: local("Pitch Medium"), local("PitchWeb-Medium"), 
+      url('#{$pitch-path}/PitchWeb-Medium.eot?#iefix') format("embedded-opentype"), 
+      url('#{$pitch-path}/PitchWeb-Medium.woff2') format("woff2"), 
+      url('#{$pitch-path}/PitchWeb-Medium.woff') format("woff"), 
+}
