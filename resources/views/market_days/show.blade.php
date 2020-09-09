@@ -30,21 +30,12 @@
         <ul>
             @if($market_day->employee)
                 <li><strong>Employee:</strong> {{ $market_day->employee }}</li>
-            @endif                
-            @if($market_day->packing_notes)
-                <li><strong>Packing Notes:</strong> {{ $market_day->packing_notes }}</li>
-            @endif
-            @if($market_day->market_notes)
-                <li><stifrong>Market Notes:</strong> {{ $market_day->market_notes }}</li>
-            @endif
-            @if($market_day->admin_notes)
-                <li><strong>Admin Notes:</strong> {{ $market_day->admin_notes }}</li>
-            @endif
+            @endif                            
             @if($market_day->estimated_revenue)
-                <li><strong>Estimated Revenue:</strong> {{ $market_day->estimated_revenue }}</li>
+                <li><strong>Estimated Revenue:</strong> ${{ $market_day->estimated_revenue }}</li>
             @endif
             @if($market_day->actual_revenue)
-                <li><strong>Actual Revenue:</strong> {{ $market_day->actual_revenue }}</li>
+                <li><strong>Actual Revenue:</strong> ${{ $market_day->actual_revenue }}</li>
             @endif
             @if($market_day->weather)
                 <li><strong>Temperature:</strong> {{ $market_day->weather }}&#176;C</li>            
@@ -55,12 +46,11 @@
         </ul>
 
         <table>                        
-            @if($market_day->state >= 3)
+            @if($market_day->state == 'Returned' || $market_day->state == 'Completed' )
                 <thead>
                     <tr>
                         <th>Products</th>
                         <th>Packed</th>
-                        <th>Unsold</th>
                         <th>Sold</th>
                         <th>~$</th>
                     </tr>
@@ -70,7 +60,6 @@
                     <tr>
                         <td>{{ $item->products->name }}</td>
                         <td>{{ $item->packed + 0 }}</td>
-                        <td>{{ $item->returned + 0 }}</td>
                         <td>{{ $item->packed - $item->returned }}</td>
                         <td>${{ $item->products->price * ($item->packed - $item->returned) }}</td>
                     </tr>
@@ -80,7 +69,7 @@
                     <tr>
                         <th>Products</th>
                         <th>
-                            @if($market_day->state <= 1)
+                            @if($market_day->state == 'Draft' || $market_day->state == 'Ready To Pack' ) 
                                 Packing List
                             @else
                                 Packed
@@ -100,6 +89,44 @@
         </table>
     </div>
     <footer>
-        <a href="/market_days/{{$market_day->id}}/edit">Edit</a>
-    </footer>
+        <a class="util notes_trigger @if($has_notes)has_notes @endif" data-toggle="collapse" href="#notes" role="button" aria-expanded="false" aria-controls="notes">
+                <i class="far fa-comment-dots"></i>
+            </a>
+            <a class="util options_trigger" data-toggle="collapse" href="#market_day_options" role="button" aria-expanded="false" aria-controls="market_day_options">
+                <i class="fas fa-cogs"></i>
+            </a>
+            <div class="collapse" id="market_day_options">
+                <button class="print-window">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <form method="POST" action="/market_days/{{ $market_day->id }}">
+                    {{ csrf_field() }}
+                    {{ method_field('DELETE') }}
+                    <button type="submit"><i class="far fa-trash-alt"></i> Delete</button>
+                </form>
+            </div>
+            
+            <a class="button" href="/market_days/{{$market_day->id}}/edit"><i class="far fa-edit"></i> Edit</a>
+
+        </footer>
+        <div class="notes collapse row no-gutters justify-content-center" id="notes">
+            @if($market_day->admin_notes)
+                <div class="col-sm-8">
+                    <strong>Admin Notes:</strong>
+                    <p>{{ $market_day->admin_notes }}</p>
+                </div> 
+            @endif                   
+            @if($market_day->packing_notes)
+                <div class="col-sm-8">
+                    <strong>Packing Notes:</strong>
+                    <p>{{ $market_day->packing_notes }}</p>
+                </div>
+            @endif    
+            @if($market_day->market_notes)
+                <div class="col-sm-8">
+                    <strong>Market Notes:</strong>
+                    <p>{{ $market_day->market_notes }}</p>
+                </div>
+            @endif 
+        </div>
 @endsection

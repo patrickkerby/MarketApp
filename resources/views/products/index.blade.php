@@ -1,20 +1,32 @@
 @extends('layout')
 
 @section('content')
-    <div>
-      <a href="/products/create" class="button">Add new product</a>
-    </div>
-    <div class="">
+
+  <div class="col-sm-8 col-lg-6">
+    <header class="row justify-content-center">
+      <h1>Products</h1>
+      <img class="logo" src="{{ asset('images/logo.svg') }}" alt="Riverbend Gardens flower logo" />
+    </header> 
 
       @foreach($categorized_products as $key => $item)
 
-      {{-- @dump($item) --}}
-        <h3>{{$key}}:</h3>
-        <ul>
+
+        <h2>{{$key}}:</h2>
+        <ul class="card-list">
           @foreach($item as $item)
-              <li><a href="/products/{{ $item->id }}"><strong>{{ $item->name }}:</strong> ${{ $item->price }}</a></li>          
+              <li class="card">
+                <a href="/products/{{ $item->id }}">
+                  <label>{{ $item->name }}:</label>
+                  <span class="setInput">${{ $item->price }}</span>
+                  <span class="setInput"><i class="far fa-edit"></i></span>
+                </a>
+              </li>          
           @endforeach
         </ul>
       @endforeach
-    </div>
+
+  </div>
+  <footer>
+    <a href="/products/create" class="button">Add new product</a>
+  </footer>
 @endsection

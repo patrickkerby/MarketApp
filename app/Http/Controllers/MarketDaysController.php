@@ -26,6 +26,13 @@ class MarketDaysController extends Controller
   
         $products = $market_day->products()->get();
 
+        if($market_day->admin_notes || $market_day->packing_notes || $market_day->market_notes) {
+            $has_notes = true;            
+        }
+        else {
+            $has_notes = false; 
+        }
+
         switch ($market_day->state) {
 
             case '0':
@@ -49,7 +56,8 @@ class MarketDaysController extends Controller
             'market_day' => $market_day,
             'markets' => $markets,
             'product_quantities' => $product_quantity_items,
-            'products' => $products
+            'products' => $products,
+            'has_notes' => $has_notes
         ]);
     }
 
@@ -205,7 +213,10 @@ class MarketDaysController extends Controller
         $products = $market_day->products()->get();
 
         if($market_day->admin_notes || $market_day->packing_notes || $market_day->market_notes) {
-            $has_notes = true;
+            $has_notes = true;            
+        }
+        else {
+            $has_notes = false; 
         }
         
         switch ($market_day->state) {
@@ -239,14 +250,17 @@ class MarketDaysController extends Controller
 
     public function update(Market_Days $market_day, Request $request)
     {
+        //get all the data to save from the edit request
         $products_returned = $request->returned;
         $products_packed = $request->packed;
         $product_quantity_items = $market_day->product_quantities()->get();  
         $state_change = $request->state;
         $employee = $request->employee;
+        $actual_revenue = $request->actual_revenue;
         $admin_notes = $request->admin_notes;
         $packing_notes = $request->packing_notes;
         $market_notes = $request->market_notes;
+        
         $weather = new Weather();
         $currentWeather = json_decode($weather->get('edmonton,ca'));
 
@@ -270,16 +284,20 @@ class MarketDaysController extends Controller
             }
         }
         
+        //Create estimated revenue 
         $market_day->estimated_revenue = 0;
+
         foreach($product_quantity_items as $item) {
             $market_day->estimated_revenue += $item->products->price * ($item->packed - $item->returned);                     
         }
 
+        //Let's add the weather
         if (isset($currentWeather)) {
             $market_day->weather = $currentWeather->main->temp;
             $market_day->wind = $currentWeather->wind->speed;
         }
 
+        //Grab any notes
         if($admin_notes) {
             $market_day->admin_notes = $admin_notes;
         }
@@ -292,15 +310,22 @@ class MarketDaysController extends Controller
         if($employee) {
             $market_day->employee = $employee;
         }
+        if($actual_revenue) {
+            $market_day->actual_revenue = $actual_revenue;
+        }
 
+        //Auto save the state change
         $market_day->state = $state_change;
-
+        
+        //update the market day with everything above
         $market_day->save();
-
+        if($market_day->state == 4) {
+            return redirect('market_days/'.$market_day->id);
+        }
+        else {
+            return redirect()->back();
+        }
         $market_day->update($this->validateMarket_Days());
-
-        return redirect()->back();
-
     }
 
     protected function validateMarket_Days()

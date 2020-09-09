@@ -1,14 +1,27 @@
 @extends('layout')
 
 @section('content')
-    <div>
-      <a href="/markets/create" class="button">Add new market</a>
-    </div>
-    <div class="content">
-      <ul>
+
+    <div class="col-sm-8 col-lg-6">
+      <header class="row justify-content-center">
+        <h1>Markets</h1>
+        <img class="logo" src="{{ asset('images/logo.svg') }}" alt="Riverbend Gardens flower logo" />
+      </header>  
+
+      <ul class="card-list">
         @foreach ($markets as $market)
-        <li><span>{{ $market->sort_order }}</span> - <a href="/markets/{{ $market->id }}/edit">{{ $market->name }}</a></li>
+          <li class="card">
+            <a href="/markets/{{ $market->id }}/edit">
+              <strong>{{ $market->sort_order }}</strong>
+              {{ $market->name }}
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
         @endforeach
       </ul>
     </div>
+    <footer>
+      <a href="/markets/create" class="button">Add new market</a>
+    </footer>
+    
 @endsection

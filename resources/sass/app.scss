@@ -67,17 +67,28 @@ h4 {
   font-weight: normal;
 }
 
-ul {
-  margin: 0 0 2rem 0;
-  padding: 0;
-}
-
-p {
+p,
+li {
   font-family: 'Visby Demi', sans-serif;
   font-size: 16px;
   text-align: center;
   color: #404040;
   margin-bottom: 3.5rem;
+}
+
+ul {
+  margin: 0 0 2rem 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+li {
+  margin-bottom: 1rem;
+  color: $green;
+
+  strong {
+    color: $black;
+  }
 }
 
 a:hover {
@@ -188,6 +199,10 @@ textarea {
     flex-direction: row;
     width: 100%;
     justify-content: space-evenly;
+
+    li {
+      margin: 0;
+    }
   }
 }
 
@@ -251,6 +266,7 @@ header {
       width: 52px;
       height: 52px;
       display: flex;
+      justify-content: center;
     }
   }
 }
@@ -266,7 +282,7 @@ header {
   h4 {
     font-size: 16px;
     width: 6rem;
-    text-align: center;
+    text-align: left;
     color: $green;
 
     &.product {
@@ -278,6 +294,15 @@ header {
 
 .card-list {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-flow: wrap;
+  justify-content: space-between;
+
+  .home & {
+    display: unset;
+  }
 }
 
 .card {
@@ -291,6 +316,12 @@ header {
   padding: 0 1rem;
   border-radius: 8px;
   height: 4rem;
+  width: 100%;
+
+  &.half {
+    width: calc(50% - 0.75rem);
+    display: inline-flex;
+  }
 
   @include slowfade();
 
@@ -322,6 +353,14 @@ header {
     padding-right: 1.5rem;
     margin: 2px auto 2px 0;
     line-height: normal;
+    color: $black;
+    text-align: left;
+
+    .setup & {
+      height: 100%;
+      align-items: center;
+      display: inline-flex;
+    }
 
     &:focus {
       outline: none;
@@ -339,6 +378,14 @@ header {
       width: 6.5rem;
       text-align: center;
     }
+
+    &[type=checkbox] {
+      border: solid 2px $light-gray;
+      display: flex;
+      width: 1rem;
+      height: 1rem;
+      margin-left: 0.5rem;
+    }
   }
 
   .setInput {
@@ -349,6 +396,7 @@ header {
     padding: 0 1.5rem;
     width: 6rem;
     justify-content: center;
+    color: $black;
   }
 
   &.large {
@@ -368,6 +416,37 @@ header {
     }
   }
 
+  &.small {
+    width: 70%;
+
+    input[type=number] {
+      width: 45%;
+    }
+  }
+
+  &.revenue {
+    justify-content: space-between;
+
+    label {
+      margin-right: 0;
+      padding-right: 0.5rem;
+    }
+
+    input {
+      padding-left: 2rem;
+      text-align: left;
+    }
+  }
+
+  .prefix {
+    display: inline-flex;
+    width: 1rem;
+    justify-content: flex-end;
+    margin-left: auto;
+    margin-right: -1.5rem;
+    z-index: 10;
+  }
+
   &:hover{
     box-shadow: $box-shadow-dark;
 
@@ -381,7 +460,8 @@ header {
 }
 
 // Product Table
-.show table {
+.show table,
+.setup table {
   width: 100%;
 
   td,
@@ -400,26 +480,65 @@ header {
   }
 }
 
+.create-markets-table {
+
+  input[type=date] {
+    font-size: 14px;
+  }
+
+  tr.product-head {
+    border: none;
+    
+    td {
+      padding-bottom: 0.25rem;
+    }
+  }
+
+  tr.inputs {
+    border-bottom: none;
+
+    td {
+      padding-top: 0;
+      padding-bottom: 0;
+      height: 100%;
+      
+      &:nth-of-type(1) input {
+        border: none;
+      }
+
+      input {
+        width: 100%;
+        padding: 1rem 0;
+      }
+    }
+  }
+
+  .card {
+    display: table-row;
+  }
+}
+
 section.products {
   margin: 2rem 0 4rem 0;
 }
 
-form.market_day_edit {
-  button {
-    position: fixed;
-    bottom: 1.3rem;
-    right: 1rem;
-    z-index: 4;
-
-    background: $green;
-    color: #fff;
-    border-radius: 26px;
-    font-size: 18px;
-    padding: 0.75rem 2.25rem;
-    outline: 0;
-    border: none;
-  }
+form.market_day_edit button,
+form.edit button,
+a.button,
+.setup button.save {
+  position: fixed;
+  bottom: 1.3rem;
+  right: 1rem;
+  z-index: 4;
+  background: $green;
+  color: #fff;
+  border-radius: 26px;
+  font-size: 18px;
+  padding: 0.75rem 2.25rem;
+  outline: 0;
+  border: none;
 }
+
 // Footer
 footer {
   height: 95px;
@@ -431,6 +550,7 @@ footer {
   width: 100%;
   display: flex;
   align-items: center;
+  z-index: 2;
 
   .util {
     color: $black;
@@ -458,11 +578,83 @@ footer {
     }
   }
 
-  .notes {
-    display: none;
+  #market_day_options {
+    position: absolute;
+    bottom: 5rem;
+    left: 1.5rem;
+    background: #3B3B3B;
+    border-radius: 6px;
+    padding: 0 0.75rem 0.5rem 0.75rem;
+    text-align: center;
+    width: 14rem;
+
+    &::after {
+      top: 100%;
+      left: 50%;
+      border: solid transparent;
+      content: "";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-top-color: #3B3B3B;
+      border-width: 10px;
+      margin-left: -10px;
+    }    
+
+    .show & {
+      left: 4.25rem;
+    }
+
+    .setup & {
+      width: 15rem;
+
+      &::after {
+        left: 10%;
+      }
+    }
+
+    button,
+    a {
+      color: #fff;
+      background: none;
+      border: none;
+      padding: 1.25rem;
+      width: 100%;
+      font-size: 16px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+
+      i {
+        margin-right: 0.5rem;
+      }
+
+      &.revert {
+        border-bottom: solid 2px #272727;
+      }
+    }
+  }
+}
+
+
+#notes {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  z-index: 1;
+  padding: 2rem 0 7rem 0;
+  font-size: 16px;
+  box-shadow: $box-shadow;
+
+  strong {
+    color: $green;
   }
 
-  .market_day_options {
-    display: none;
+  p {
+    text-align: left;
+    font-family: 'Pitch', serif;
   }
 }
