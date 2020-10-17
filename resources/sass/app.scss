@@ -229,7 +229,7 @@ textarea {
         padding-left: 1rem;
         height: 100%;
         transform: rotate(180deg);
-        width: auto;
+        width: unset;
   
         @include slowfade(0.2);
       }
