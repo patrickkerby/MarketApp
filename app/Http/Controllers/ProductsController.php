@@ -22,7 +22,7 @@ class ProductsController extends Controller
     public function show(Products $product)
     {
 
-        $categories = Categories::find($product->category_id);
+        $categories = categories::find($product->category_id);
 
         return view('products.show', [
             'product' => $product,
@@ -32,7 +32,7 @@ class ProductsController extends Controller
 
     public function create()
     {
-        $categories = Categories::latest()->get();
+        $categories = categories::latest()->get();
         $categories = $categories->sortBy('$categories');
         $categories->values()->all();
 
@@ -51,11 +51,11 @@ class ProductsController extends Controller
 
     public function edit(Products $product)
     {
-        $categories = Categories::latest()->get();
+        $categories = categories::latest()->get();
         $categories = $categories->sortBy('$categories');
         $categories->values()->all();
 
-        $current_category =  Categories::find($product->category_id);
+        $current_category = categories::find($product->category_id);
 
 
         return view('products.edit', 

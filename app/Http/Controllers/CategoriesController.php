@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Categories;
+use App\categories;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
     public function index()
     {
-        $categories = Categories::latest()->get()->sortBy('name');
+        $categories = categories::latest()->get()->sortBy('name');
         return view('categories.index', ['categories' => $categories]);
     }
 
-    public function show(Categories $category)
+    public function show(categories $category)
     {
         return view('categories.show', ['category' => $category]);
     }
@@ -25,17 +25,17 @@ class CategoriesController extends Controller
 
     public function store()
     {
-        Categories::create($this->validateCategory());
+        categories::create($this->validateCategory());
 
         return redirect('/categories');
     }
 
-    public function edit(Categories $category)
+    public function edit(categories $category)
     {
         return view('categories.edit', compact('category'));
     }
 
-    public function update(Categories $category)
+    public function update(categories $category)
     {
 
         $category->update($this->validateCategory());

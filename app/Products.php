@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Categories;
+use App\categories;
 use Illuminate\Database\Eloquent\Model;
 
 class Products extends Model
@@ -16,7 +16,7 @@ class Products extends Model
 
     public function categories()
     {
-        return $this->belongsTo(Categories::class, 'category_id');
+        return $this->belongsTo(categories::class, 'category_id');
     }
 
     public function product_quantities()
