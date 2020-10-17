@@ -168,7 +168,7 @@ textarea {
     font-size: 20px;
     position: absolute;
     left: unset;
-    right: 0.6rem;
+    right: 5px;
     transform: rotate(0deg);
 
     @include slowfade(0.2);
