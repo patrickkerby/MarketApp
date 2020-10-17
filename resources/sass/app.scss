@@ -170,6 +170,7 @@ textarea {
     left: unset;
     right: 5px;
     transform: rotate(0deg);
+    width: 1.5rem;
 
     @include slowfade(0.2);
   }
@@ -228,6 +229,7 @@ textarea {
         padding-left: 1rem;
         height: 100%;
         transform: rotate(180deg);
+        width: auto;
   
         @include slowfade(0.2);
       }
