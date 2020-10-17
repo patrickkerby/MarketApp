@@ -14,7 +14,9 @@ class MarketDaysController extends Controller
 {
     public function index(Market_Days $market_day)
     {
-        $market_days = market_days::all()->groupBy('state');        
+        $market_days = market_days::all()->sortBy('state');
+        $market_days = $market_days->groupBy('state');
+        
         return view('market_days.index', compact('market_days'));
     }
 
