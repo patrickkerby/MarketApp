@@ -91,6 +91,30 @@ li {
   }
 }
 
+.btn-link {
+  color: $green;
+}
+
+.admin_only {
+  color: #a4a4a4;
+  width: 80%;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  display: flex;
+  padding: 1rem;
+  border: solid 2px #a4a4a4;
+  border-radius: 4px;
+
+  @include slowfade(0.2);
+
+  &:hover {
+    color: #777;
+    border: solid 2px #777;
+
+    @include slowfade(0.2);
+  }
+}
+
 a:hover {
   text-decoration: none;
 }
@@ -206,6 +230,12 @@ textarea {
   }
 }
 
+.top-right {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
 // Primary Header
 header {
   margin: 0 0 4rem 0;
@@ -263,7 +293,8 @@ header {
       font-size: 47px;
       line-height: 40px;
       border: solid 3px $green;
-      width: 52px;
+      // width: 52px;
+      padding: 0 0.2rem;
       height: 52px;
       display: flex;
       justify-content: center;
@@ -332,6 +363,12 @@ header {
     width: 100%;
     display: inline-flex;
     align-items: center;
+
+    .actual_revenue {
+      color: $black;
+      margin-left: 5px;
+      font-size: 14px;
+    }
   }
 
   strong {
@@ -525,7 +562,8 @@ section.products {
 form.market_day_edit button,
 form.edit button,
 a.button,
-.setup button.save {
+.setup button.save,
+.authentication form button {
   position: fixed;
   bottom: 1.3rem;
   right: 1rem;
@@ -578,7 +616,8 @@ footer {
     }
   }
 
-  #market_day_options {
+  #market_day_options,
+  #product_options {
     position: absolute;
     bottom: 5rem;
     left: 1.5rem;
@@ -656,5 +695,47 @@ footer {
   p {
     text-align: left;
     font-family: 'Pitch', serif;
+  }
+}
+
+#additionalNav {
+  position: absolute;
+  right: -1rem;
+  top: 4.5rem;
+  flex-direction: column;
+  text-align: center;
+  background: #fff;
+  box-shadow: $box-shadow-dark;
+  padding: 1rem 1.5rem;
+
+  &::before {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: "";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-bottom-color: #fff;
+    border-width: 10px;
+    margin-left: -10px;
+    opacity: 1;
+  }  
+
+  p {
+    margin: 0 0 0.75rem 0;
+    padding-bottom: 1rem;
+    border-bottom: solid 2px $light-gray;
+  }
+
+  &.collapse,
+  &.collapsing {
+    flex-direction: column;
+  }
+
+  &.show {
+    display: flex;
+    flex-direction: column;
   }
 }

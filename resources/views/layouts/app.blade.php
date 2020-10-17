@@ -42,8 +42,9 @@
         <div id="additionalNav" class="collapse">
           @if (Route::has('login'))
             @auth
-            <p>Signed in as: <strong>{{ Auth::user()->name }}!</strong></p>
+            <p>Hi there, <strong>{{ Auth::user()->name }}!</strong></p>
 
+            <a href="/market_days/completed">See Completed Markets</a>
             @else
               <a href="{{ route('login') }}">Login</a>
 

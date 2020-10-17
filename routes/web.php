@@ -12,49 +12,69 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
 
-Route::get('/', function () {
-    return view('welcome', [
-        'markets' => App\Markets::all()
-    ]);
-});
-
+Route::get('/', 'MarketDaysController@index')
+    ->middleware('auth');
 
 // Route for index and individual market pages
-Route::get('/markets', 'MarketsController@index');
+Route::get('/markets', 'MarketsController@index')
+    ->middleware('auth');
 Route::post('/markets', 'MarketsController@store');
-Route::get('/markets/create', 'MarketsController@create');
-Route::get('/markets/{market}', 'MarketsController@show')->name('markets.show');
-Route::get('/markets/{market}/edit', 'MarketsController@edit');
+Route::get('/markets/create', 'MarketsController@create')
+    ->middleware('auth');
+Route::get('/markets/{market}', 'MarketsController@show')->name('markets.show')
+    ->middleware('auth');
+Route::get('/markets/{market}/edit', 'MarketsController@edit')
+->middleware('auth');
 Route::put('/markets/{market}', 'MarketsController@update');
 
 // Route for products index and individual pages
-Route::get('/products', 'ProductsController@index');
+Route::get('/products', 'ProductsController@index')
+    ->middleware('auth');
 Route::post('/products', 'ProductsController@store');
-Route::get('/products/create', 'ProductsController@create');
-Route::get('/products/{product}', 'ProductsController@show')->name('products.show');
-Route::get('/products/{product}/edit', 'ProductsController@edit');
+Route::get('/products/create', 'ProductsController@create')
+    ->middleware('auth');
+Route::get('/products/{product}', 'ProductsController@show')->name('products.show')
+    ->middleware('auth');
+Route::get('/products/{product}/edit', 'ProductsController@edit')
+    ->middleware('auth');
 Route::put('/products/{product}', 'ProductsController@update');
 Route::delete('products/{product}', 'ProductsController@destroy');
 
 // Route for categories index and individual (edit) pages
-Route::get('/categories', 'CategoriesController@index');
+Route::get('/categories', 'CategoriesController@index')
+    ->middleware('auth');
 Route::post('/categories', 'CategoriesController@store');
-Route::get('/categories/create', 'CategoriesController@create');
-Route::get('/categories/{category}', 'CategoriesController@show')->name('categories.show');
-Route::get('/categories/{category}/edit', 'CategoriesController@edit');
+Route::get('/categories/create', 'CategoriesController@create')
+    ->middleware('auth');
+Route::get('/categories/{category}', 'CategoriesController@show')->name('categories.show')
+    ->middleware('auth');
+Route::get('/categories/{category}/edit', 'CategoriesController@edit')
+    ->middleware('auth');
 Route::put('/categories/{category}', 'CategoriesController@update');
 Route::delete('categories/{category}', 'CategoriesController@destroy');
 
 // Route for Market Days index and individual pages
-Route::get('/market_days', 'MarketDaysController@index');
+Route::get('/market_days', 'MarketDaysController@index')
+    ->middleware('auth');
 // Route::post('/market_days', 'MarketDaysController@store');
 
-Route::get('/market_days/create-setup', 'MarketDaysController@createStep1');
-Route::post('/market_days/create-setup', 'MarketDaysController@postCreateStep1');
-Route::get('/market_days/create', 'MarketDaysController@createStep2');
+// Display index of Completed Market Days
+Route::get('/market_days/completed', 'MarketDaysController@completedindex')
+->middleware('auth');
+
+
+Route::get('/market_days/create-setup', 'MarketDaysController@createStep1')
+    ->middleware('auth');
+Route::post('/market_days/create-setup', 'MarketDaysController@postCreateStep1')
+    ->middleware('auth');
+Route::get('/market_days/create', 'MarketDaysController@createStep2')
+    ->middleware('auth');
 Route::post('/market_days/create', 'MarketDaysController@store');
-Route::get('/market_days/{market_day}', 'MarketDaysController@show')->name('market_days.show');
-Route::get('/market_days/{market_day}/edit', 'MarketDaysController@edit');
+Route::get('/market_days/{market_day}', 'MarketDaysController@show')->name('market_days.show')
+    ->middleware('auth');
+Route::get('/market_days/{market_day}/edit', 'MarketDaysController@edit')
+    ->middleware('auth');
 Route::put('/market_days/{market_day}', 'MarketDaysController@update');
 Route::delete('/market_days/{market_day}', 'MarketDaysController@destroy');

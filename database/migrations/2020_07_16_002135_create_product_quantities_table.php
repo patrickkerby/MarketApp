@@ -23,7 +23,7 @@ class CreateProductQuantitiesTable extends Migration
 
 
             $table->foreignId('product_id')->constrained();
-            $table->foreignId('market_day_id')->constrained('market_days');
+            $table->foreignId('market_day_id')->constrained('market_days')->onDelete('cascade');
 
 
             // $table->foreign('product_id')->references('id')->on('products');

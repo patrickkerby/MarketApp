@@ -7,7 +7,7 @@ use App\Markets;
 use App\product_quantities;
 use App\Products;
 use Illuminate\Http\Request;
-use GNAHotelSolutions\Weather\Weather;
+// use GNAHotelSolutions\Weather\Weather;
 use PhpParser\Node\Expr\Isset_;
 
 class MarketDaysController extends Controller
@@ -16,6 +16,14 @@ class MarketDaysController extends Controller
     {
         $market_days = market_days::all()->groupBy('state');        
         return view('market_days.index', compact('market_days'));
+    }
+
+    public function completedindex(Market_Days $market_day)
+    {
+        $market_days = market_days::all()->where('state', 4);  
+        // $market_days = market_days::all()->groupBy('state');        
+       
+        return view('market_days.completed-index', compact('market_days'));
     }
 
     public function show(Market_Days $market_day)
@@ -174,7 +182,7 @@ class MarketDaysController extends Controller
                         $market_day->market_id = $item['market_id'];
                         $market_day->date = $item['date'];
                         $market_day->admin_notes = $item['admin_notes'];
-                        $market_day->state = 0;
+                        $market_day->state = 1;
             
                         $market_day->save();
                     
@@ -261,8 +269,8 @@ class MarketDaysController extends Controller
         $packing_notes = $request->packing_notes;
         $market_notes = $request->market_notes;
         
-        $weather = new Weather();
-        $currentWeather = json_decode($weather->get('edmonton,ca'));
+        // $weather = new Weather();
+        // $currentWeather = json_decode($weather->get('edmonton,ca'));
 
         if (isset($products_packed)) {
             foreach($products_packed as $key => $qty) {   
@@ -291,11 +299,11 @@ class MarketDaysController extends Controller
             $market_day->estimated_revenue += $item->products->price * ($item->packed - $item->returned);                     
         }
 
-        //Let's add the weather
-        if (isset($currentWeather)) {
-            $market_day->weather = $currentWeather->main->temp;
-            $market_day->wind = $currentWeather->wind->speed;
-        }
+        // //Let's add the weather
+        // if (isset($currentWeather)) {
+        //     $market_day->weather = $currentWeather->main->temp;
+        //     $market_day->wind = $currentWeather->wind->speed;
+        // }
 
         //Grab any notes
         if($admin_notes) {

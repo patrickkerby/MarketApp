@@ -15,7 +15,7 @@
         <ul class="card-list">
           @foreach($item as $item)
               <li class="card">
-                <a href="/products/{{ $item->id }}">
+                <a href="/products/{{ $item->id }}/edit">
                   <label>{{ $item->name }}:</label>
                   <span class="setInput">${{ $item->price }}</span>
                   <span class="setInput"><i class="far fa-edit"></i></span>
