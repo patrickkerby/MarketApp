@@ -15,7 +15,7 @@ class MarketDaysSeeder extends Seeder
         $json = File::get("database/data/market_days.json");
         $data = json_decode($json);
         foreach ($data as $obj) {
-          App\Market_Days::create(array(
+          App\market_days::create(array(
             'id' => $obj[0],
             'market_id' => $obj[2],
             'created_at' => $obj[9],

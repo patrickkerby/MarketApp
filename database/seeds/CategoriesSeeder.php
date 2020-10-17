@@ -1,5 +1,6 @@
 <?php
 
+use App\categories;
 use Illuminate\Database\Seeder;
 
 class CategoriesSeeder extends Seeder
@@ -15,7 +16,7 @@ class CategoriesSeeder extends Seeder
         $json = File::get("database/data/categories.json");
         $data = json_decode($json);
         foreach ($data as $obj) {
-          App\Categories::create(array(
+          App\categories::create(array(
             'id' => $obj[0],
             'created_at' => $obj[3],
             'updated_at' => $obj[4],
