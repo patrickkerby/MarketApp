@@ -746,3 +746,82 @@ footer {
     flex-direction: column;
   }
 }
+
+// Print Styles
+
+@media print {
+  header {
+    border: none;
+    margin: 0;
+    color: #000;
+    justify-content: flex-start !important;
+    display: inline-flex !important;
+    padding-left: 15px;
+
+    h1 {
+      margin-bottom: 0.5rem;
+      color: #000;
+    }
+  }
+
+  h3 {
+    position: relative;
+    z-index: 1;
+    color: #000;
+    padding-bottom: 2rem;
+    border-bottom: solid 2px #000;
+  }
+
+  .card {
+    height: 2.5rem;
+    font-size: 20px;
+    padding: 0;
+    color: #000;
+
+    label {
+      margin-right: 0;
+      padding-right: 0.5rem;
+      color: #000;
+
+      &::after {
+        content: ":";
+      }
+    }
+
+    input,
+    input[type=number] {
+      text-align: center;
+      width: auto;
+      padding: 0.24rem;
+      font-size: 24px;
+      color: #000;
+      border: solid 2px #000;
+      height: 77%;
+      display: flex;
+      max-width: 2.5rem;
+    }
+  }
+
+  .employee,
+  .card.large,
+  .list-head,
+  .introduction {
+    display: none !important;
+  }
+
+  #notes {
+    position: static;
+    padding: 0;
+
+    div {
+      max-width: 100% !important;
+      flex: 0 0 100%;
+
+      strong,
+      p {
+        color: #000;
+      }
+    }
+  }
+
+}

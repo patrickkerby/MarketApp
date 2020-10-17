@@ -4,10 +4,10 @@
     <div class="col-sm-8 col-lg-6">  
         <header class="row justify-content-center">
             <h1>
-                <span>{{ $market_day->state }}</span>
+                <span class="d-print-none">{{ $market_day->state }}</span>
                 {{ $market_day->market->name }}                
             </h1>
-            <div class="date">
+            <div class="date d-print-none">
                 <span class="month">
                     {{ \Carbon\Carbon::parse($market_day->date)->format('M')}}.
                 </span>
@@ -20,13 +20,14 @@
                 
             </div>
         </header> 
+        <h3 class="d-none d-print-flex">{{ \Carbon\Carbon::parse($market_day->date)->format('M j, Y')}}</h3>
         <form method="POST" class="market_day_edit" action="/market_days/{{ $market_day->id }}">
             @csrf
             @method('PUT')                                    
 
             @switch($market_day->state)
                 @case('Draft')
-                    <ul class="card-list">
+                    <ul class="card-list employee">
                         <li class="card"><label for="employee">Market Employee(s):</label> <input name="employee" id="employee" type="text" @isset($market_day->employee) value="{{ $market_day->employee }}" @endisset /></li>
                     </ul>  
                     <section class="products">
@@ -48,14 +49,14 @@
                         <textarea name="admin_notes" id="admin_notes" class="" rows="8">@isset($market_day->admin_notes){{ $market_day->admin_notes }}@endisset</textarea>
                     </div>
                     <input type="hidden" name="state" value="1" />
-                    <button class="button" type="submit">Ready To Pack? <i class="fas fa-check"></i></button>
+                    <button class="button d-print-none" type="submit">Ready To Pack? <i class="fas fa-check"></i></button>
                     @break
 
                 @case('Ready To Pack')
-                    <div class="row justify-content-center">
+                    <div class="row justify-content-center introduction">
                         <p class="col-9">This market is ready to be packed. If any product are unavailable, or any changes to the numbers below need to be made, adjust them before you continue.</p>
                     </div>
-                    <ul class="card-list">
+                    <ul class="card-list employee">
                         <li class="card"><label for="employee">Market Employee(s):</label> <input name="employee" id="employee" type="text" @isset($market_day->employee) value="{{ $market_day->employee }}" @endisset /></li>
                     </ul>  
                     <section class="products">
@@ -77,14 +78,14 @@
                         <textarea name="packing_notes" id="packing_notes" class="" rows="8" placeholder="Enter anything relevant from the process of packing the trucks.">@isset($market_day->packing_notes){{ $market_day->packing_notes }}@endisset</textarea>
                     </div>
                     <input type="hidden" name="state" value="2" />
-                    <button class="button" type="submit">Truck is packed <i class="fas fa-check"></i></button>
+                    <button class="button d-print-none" type="submit">Truck is packed <i class="fas fa-check"></i></button>
                     @break
 
                 @case('Packed')
-                    <div class="row justify-content-center">
+                    <div class="row justify-content-center introduction">
                         <p class="col-9">Now that market is over, count how many of each product is leftover, and report it below!</p>
                     </div>
-                    <ul class="card-list">
+                    <ul class="card-list employee">
                         <li class="card"><label for="employee">Market Employee(s):</label> <input name="employee" id="employee" type="text" @isset($market_day->employee) value="{{ $market_day->employee }}" @endisset /></li>
                     </ul>  
                     <section class="products">
@@ -109,7 +110,7 @@
                         <textarea name="market_notes" id="market_notes" class="" rows="8" placeholder="Enter any relevant notes or comments from the Market day.">@isset($market_day->market_notes){{ $market_day->market_notes }}@endisset</textarea>
                     </div>
                     <input type="hidden" name="state" value="3" />
-                    <button class="button" type="submit">Mark as Returned <i class="fas fa-check"></i></button>
+                    <button class="button d-print-none" type="submit">Mark as Returned <i class="fas fa-check"></i></button>
 
                     @break
 
@@ -153,7 +154,7 @@
                     </section>                       
                     <input type="hidden" name="state" value="4" />
                     <section>
-                        <button class="button" type="submit">Complete this Market! <i class="fas fa-check"></i></button>
+                        <button class="button d-print-none" type="submit">Complete this Market! <i class="fas fa-check"></i></button>
                     </section>
 
                     @break
@@ -198,7 +199,7 @@
                     </section>                     
                     <input type="hidden" name="state" value="4" />
                     <section>
-                        <button class="button" type="submit">Save <i class="fas fa-check"></i></button>
+                        <button class="button d-print-none" type="submit">Save <i class="fas fa-check"></i></button>
                     </section>
 
                     @break
@@ -206,7 +207,7 @@
             @endswitch
         </form>
 
-        <footer>
+        <footer class="d-print-none">
             <a class="util notes_trigger @if($has_notes)has_notes @endif" data-toggle="collapse" href="#notes" role="button" aria-expanded="false" aria-controls="notes">
                 <i class="far fa-comment-dots"></i>
             </a>
@@ -249,7 +250,7 @@
                 </form>
             </div>
         </footer>
-        <div class="notes collapse row no-gutters justify-content-center" id="notes">
+        <div class="notes collapse row no-gutters justify-content-center d-print-flex" id="notes">
             @if($market_day->admin_notes)
                 <div class="col-sm-8">
                     <strong>Admin Notes:</strong>
