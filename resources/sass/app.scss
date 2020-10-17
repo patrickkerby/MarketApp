@@ -145,6 +145,10 @@ textarea {
   width: 80%;
   z-index: 100;
 
+  @include media-breakpoint-down(sm) {
+    width: 100%;
+  }
+
   .markets i {
     color: #E26125;
   }
@@ -174,6 +178,10 @@ textarea {
     color: $black;
     font-size: 16px;
     padding: 0.35rem;
+
+    @include media-breakpoint-down(sm) {
+      padding: 0.5rem 0.35rem
+    }
   }
 
   .hamburg {
@@ -205,6 +213,11 @@ textarea {
       background: #fff;
       left: 10%;
       justify-content: center;
+
+      @include media-breakpoint-down(sm) {
+        left: 0;
+        height: auto;
+      }
       
       button {
         position: absolute;
@@ -231,8 +244,20 @@ textarea {
     width: 100%;
     justify-content: space-evenly;
 
+    @include media-breakpoint-down(sm) {
+      width: 75%;
+      flex-direction: column;
+    }
+
     li {
       margin: 0;
+
+      @include media-breakpoint-down(sm) {
+        height: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
   }
 }
@@ -714,6 +739,13 @@ footer {
   background: #fff;
   box-shadow: $box-shadow-dark;
   padding: 1rem 1.5rem;
+  z-index: 2;
+  
+  @include media-breakpoint-down(sm) {
+    top: 108%;
+    left: 0;
+    right: 0;
+  }
 
   &::before {
     bottom: 100%;

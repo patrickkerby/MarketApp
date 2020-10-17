@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-    <div class="col-sm-8 col-lg-6">  
+    <div class="col-11 col-sm-8 col-lg-6">  
         <header class="row justify-content-center">
             <h1>
                 <span class="d-print-none">{{ $market_day->state }}</span>

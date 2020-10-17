@@ -4,7 +4,7 @@
 
 @section('class', 'home')
 
-    <div class="col-sm-8 col-lg-6">
+    <div class="col-11 col-sm-8 col-lg-6">
       <header class="row justify-content-center">
         <h1><span>Riverbend Gardens</span> Market Days</h1>
         <img class="logo" src="{{ asset('images/logo.svg') }}" alt="Riverbend Gardens flower logo" />

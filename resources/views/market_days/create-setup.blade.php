@@ -5,7 +5,7 @@
 @section('class', 'setup')
 
 
-<div class="col-sm-8 col-lg-6">
+<div class="col-11 col-sm-8 col-lg-6">
   <header class="row justify-content-center">
     <h1><span>Setup for</span> New Market Days</h1>
   </header>
