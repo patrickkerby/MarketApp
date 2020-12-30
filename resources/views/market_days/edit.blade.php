@@ -39,7 +39,7 @@
                         @foreach($product_quantities as $item)
                             <li class="card">
                                 <label for="item{{ $item->id }}">{{ $item->products->name }}</label>
-                                <input name="packed[{{ $item->id }}]" id="item{{ $item->id }}" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
+                                <input name="packed[{{ $item->id }}]" id="item{{ $item->id }}" type="number" min="0" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
                             </li>
                         @endforeach
                         </ul>
@@ -68,7 +68,7 @@
                         @foreach($product_quantities as $item)
                             <li class="card">
                                 <label for="item{{ $item->id }}">{{ $item->products->name }}</label>
-                                <input name="packed[{{ $item->id }}]" id="item{{ $item->id }}" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
+                                <input name="packed[{{ $item->id }}]" id="item{{ $item->id }}" type="number" min="0" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
                             </li>
                         @endforeach
                         </ul>                        
@@ -99,7 +99,7 @@
                         <li class="card">
                             <label for="item{{ $item->id }}">{{ $item->products->name }}</label>
                             <span class="setInput">{{ $item->packed + 0 }}</span>
-                            <input name="returned[{{ $item->id }}]" id="item{{ $item->id }}" type="number" step="0.25" max="{{ $item->packed }}" @isset($item->returned)value="{{ $item->returned + 0 }}"@endisset />
+                            <input name="returned[{{ $item->id }}]" id="item{{ $item->id }}" type="number" min="0" step="0.25" max="{{ $item->packed }}" @isset($item->returned)value="{{ $item->returned + 0 }}"@endisset />
                             </tr>
                         @endforeach
                             </tbody>
@@ -145,8 +145,8 @@
                         @foreach($product_quantities as $item)
                             <li class="card">
                                 <label>{{ $item->products->name }}</label>
-                                <input name="packed[{{ $item->id }}]" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
-                                <input name="returned[{{ $item->id }}]" type="number" step="0.25" max="{{ $item->packed }}" @isset($item->returned)value="{{ $item->returned + 0 }}"@endisset />
+                                <input name="packed[{{ $item->id }}]" type="number" min="0" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
+                                <input name="returned[{{ $item->id }}]" type="number" min="0" step="0.25" max="{{ $item->packed }}" @isset($item->returned)value="{{ $item->returned + 0 }}"@endisset />
                                 <span class="setInput">${{ $item->products->price * ($item->packed - $item->returned) }}</span>
                             </li>
                         @endforeach
@@ -190,7 +190,7 @@
                         @foreach($product_quantities as $item)
                             <li class="card">
                                 <label>{{ $item->products->name }}</label>
-                                <input name="packed[{{ $item->id }}]" type="number" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
+                                <input name="packed[{{ $item->id }}]" type="number" min="0" step="0.25" max="60" @isset($item->packed) value="{{ $item->packed + 0 }}" @endisset />
                                 <input name="returned[{{ $item->id }}]" type="number" step="0.25" max="{{ $item->packed }}" @isset($item->returned)value="{{ $item->returned + 0 }}"@endisset />
                                 <span class="setInput">${{ $item->products->price * ($item->packed - $item->returned) }}</span>
                             </li>

@@ -20,8 +20,6 @@ class CreateProductQuantitiesTable extends Migration
             // $table->bigInteger('product_id')->unsigned();
             $table->decimal('packed', 5, 2)->nullable();
             $table->decimal('returned', 5, 2)->nullable();
-
-
             $table->foreignId('product_id')->constrained();
             $table->foreignId('market_day_id')->constrained('market_days')->onDelete('cascade');
 
