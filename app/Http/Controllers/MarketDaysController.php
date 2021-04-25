@@ -7,8 +7,11 @@ use App\Markets;
 use App\product_quantities;
 use App\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 // use GNAHotelSolutions\Weather\Weather;
 use PhpParser\Node\Expr\Isset_;
+use Yajra\Datatables\Datatables;
+
 
 class MarketDaysController extends Controller
 {
@@ -20,12 +23,77 @@ class MarketDaysController extends Controller
         return view('market_days.index', compact('market_days'));
     }
 
-    public function completedindex(Market_Days $market_day)
+    public function completedindex(Markets $markets)
     {
-        $market_days = market_days::all()->where('state', 4);  
-        // $market_days = market_days::all()->groupBy('state');        
-       
-        return view('market_days.completed-index', compact('market_days'));
+        $markets = Markets::all()->sortBy('name');
+        return view('market_days.completed-index', compact('markets'));
+    }
+
+    public function getdata(Request $request)
+    {
+        $completed_markets = market_days::select('id', 'market_id', 'date', 'actual_revenue')->where('state', 4);
+        
+        if ($request->ajax()) {
+            return DataTables::of($completed_markets) 
+                ->addColumn('name', function(Market_Days $market_day) {
+                    return $market_day->market->name;
+                })  
+                ->addColumn('action', function($completed_markets) {
+                    $market_day_id = $completed_markets->id;
+                    $market_day_url = "<a href=\"/market_days/".$market_day_id."/edit\">Details</a>";
+                    return $market_day_url;
+                })
+                ->editColumn('date', function ($completed_markets) {
+                    $date = $completed_markets->date;
+                    $formatted_date = \Carbon\Carbon::parse($date)->format('F j, Y');
+                    
+                    return $formatted_date; // human readable format
+                })
+                ->editColumn('actual_revenue', function ($request) {
+                    
+                    $actual_revenue = $request->actual_revenue;
+                    $actual_revenue_formatted = "$".$actual_revenue;
+
+                    return $actual_revenue_formatted; // human readable format
+                })
+                ->filter(function ($instance) use ($request) {
+                    
+                    $year = $request->get('year');
+                    $month = $request->get('month');
+                    $market = $request->get('market');
+                    
+                    if ( $market && $month) {
+                        $instance
+                        ->where('date', 'like', ''.$year .'%')
+                        ->where('date', 'like', '%'.$month .'%')
+                        ->where('market_id', 'like', $market);
+                    }
+                    elseif ($market && !$month) {
+                        $instance
+                        ->where('date', 'like', ''.$year .'%')
+                        ->where('market_id', 'like', $market.'%');
+                    }
+                    elseif ( $month ) {
+                        $instance
+                        ->where('date', 'like', ''.$year .'%')
+                        ->where('date', 'like', '%'.$month .'%');
+                    }  
+                    else {
+                        $instance
+                        ->where('date', 'like', ''.$year .'%');
+                    }
+                })
+                ->make(true);          
+        }
+        else {
+            return DataTables::of($completed_markets)
+            ->addColumn('name', function(Market_Days $market_day) {
+                return $market_day->market->name;
+            })
+            ->make(true);
+        }
+        
+        return view('market_days.completed-index');
     }
 
     public function show(Market_Days $market_day)

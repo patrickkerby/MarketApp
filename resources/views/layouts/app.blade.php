@@ -10,7 +10,15 @@
       <title>Riverbend Gardens Market App</title>
 
       <!-- Scripts -->
+      <script src="//code.jquery.com/jquery.js"></script>
+      <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+      <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+      <!-- Bootstrap CSS -->
+      <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">      
       <script src="{{ asset('js/app.js') }}" defer></script>
+      
 
       <!-- Fonts -->
       <link rel="stylesheet" href="https://use.typekit.net/thb0pbt.css">
@@ -74,6 +82,9 @@
   <div class="content row justify-content-center">
     @yield('content')
   </div>
-  
+  <script>
+    
+  </script>
   </body>
+  
 </html>

@@ -358,7 +358,7 @@ header {
   }
 }
 
-.card-list {
+.card-list   {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -552,7 +552,8 @@ header {
   }
 }
 
-.create-markets-table {
+.create-markets-table,
+.dataTable {
 
   input[type=date] {
     font-size: 14px;
@@ -611,6 +612,52 @@ a.button,
   outline: 0;
   border: none;
 }
+
+//Completed Markets AKA Admin section
+#completed_markets_processing {
+  position: fixed;
+  width: 20%;
+  height: 20%;
+  top: 40%;
+  left: 40%;
+}
+
+.completed {
+  .form-group {
+    margin-right: 1rem;
+  }
+}
+
+div#completed_markets_wrapper {
+  width: 100%;
+
+  tr td:nth-of-type(2) {
+    color: $green;
+  }
+  
+  td.sorting_1 {
+    color: $black;
+    font-size: 14px !important;
+    font-weight: normal;
+    padding: 1.25rem 0.5rem 1.25rem 1.25rem !important;
+    line-height: 25px;
+  }
+
+  td a {
+    font-size: 14px;
+    background: #cecece;
+    color: #fff;
+    border-radius: 13px;
+    text-align: center;
+    margin: 0 0rem 0 0;
+    justify-content: center;
+  }
+
+  tr td:nth-of-type(4) {
+    padding: 1.25rem 1.5rem 1.25rem 0.5rem !important;
+  }
+}
+
 
 // Footer
 footer {

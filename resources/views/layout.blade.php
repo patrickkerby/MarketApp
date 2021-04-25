@@ -8,9 +8,12 @@
       <!-- CSRF Token -->
       <meta name="csrf-token" content="{{ csrf_token() }}">
 
-      <title>Riverbend Gardens Market App</title>
+      <title>Riverbend Gardens Market Appasdfas</title>
 
       <!-- Scripts -->
+      <script src="//code.jquery.com/jquery.js"></script>
+      <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+      <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
       <script src="{{ asset('js/app.js') }}" defer></script>
 
       <!-- Fonts -->

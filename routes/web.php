@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\market_days;
+use App\Markets;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -61,8 +64,12 @@ Route::get('/market_days', 'MarketDaysController@index')
 // Route::post('/market_days', 'MarketDaysController@store');
 
 // Display index of Completed Market Days
-Route::get('/market_days/completed', 'MarketDaysController@completedindex')
-->middleware('auth');
+// Route::get('/market_days/completed', 'MarketDaysController@completedindex')->name('completed-index')
+// ->middleware('auth');
+
+//testing
+Route::get('/market_days/completed', 'MarketDaysController@completedindex')->name('completed-index');
+Route::get('/market_days/completed/getdata', 'MarketDaysController@getdata')->name('completed-index.getdata');
 
 
 Route::get('/market_days/create-setup', 'MarketDaysController@createStep1')
