@@ -57,8 +57,12 @@
         @endunless       
       @endforeach
 
-      <a class="admin_only" href="/market_days/completed">Admin only: See Completed Markets</a>
-
+      @php 
+        $username = Auth::user()->name;
+      @endphp
+      @if($username != "Staff")
+        <a class="admin_only" href="/market_days/completed">Admin only: See Completed Markets</a>
+      @endif
 
        {{-- @can ('view_completed_market_days')
        <div class="row no-gutters">
