@@ -86,8 +86,13 @@ class ProductsController extends Controller
     public function destroy(Products $product)
     {
 
+        // if ($product->product_quantities->count()) {
+        //     return back()->withErrors(['error' => 'Product can\'t be deleted as it has been used in existing market days']);
+        // }
         $product->delete();
 
-        return redirect('/products');
+        // return redirect('/products');
+        return redirect('/products')->with('message','Product has been deleted');
+
     }
 }

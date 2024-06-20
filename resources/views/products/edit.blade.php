@@ -34,6 +34,16 @@
             </select>
         </li>
       </ul>
+
+      @if($errors->any())
+        <div class="is-danger alert alert-danger">
+          <ul>
+            @foreach($errors->all() as $error)
+              <li><p>{{ $error }}</p></li>
+            @endforeach
+          </ul>
+        </div>
+        @endif
         
       <button class="button" type="submit">Update Product</button>              
 
@@ -48,7 +58,7 @@
     </a>
     <div class="collapse" id="product_options">
 
-      <form method="POST" action="/products/product/{{ $product->id }}">
+      <form method="POST" action="/products/{{ $product->id }}"" onsubmit="return confirm('Are you sure you want to delete this product?')"> 
         {{  csrf_field() }}
         {{ method_field('DELETE') }}
   
