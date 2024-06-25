@@ -37,6 +37,7 @@
                   <label><strong>Year:</strong></label>
                   <select id='year' class="form-control" style="width: 100px">
                       <option value="" default>All</option>
+                      <option value="2024">2024</option>
                       <option value="2023">2023</option>
                       <option value="2022">2022</option>
                       <option value="2021">2021</option>
