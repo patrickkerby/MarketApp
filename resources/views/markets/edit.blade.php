@@ -47,7 +47,7 @@
             </li>
           </ul>
           
-          <button class="button" type="submit">Update Market</button>
+          <button class="button main-action" type="submit">Update Market</button>
           
         </form>
 </div>

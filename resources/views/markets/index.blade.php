@@ -21,7 +21,7 @@
       </ul>
     </div>
     <footer>
-      <a href="/markets/create" class="button">Add new market</a>
+      <a href="/markets/create" class="button main-action">Add new market</a>
     </footer>
     
 @endsection

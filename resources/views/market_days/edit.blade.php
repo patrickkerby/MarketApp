@@ -49,7 +49,7 @@
                         <textarea name="admin_notes" id="admin_notes" class="" rows="8">@isset($market_day->admin_notes){{ $market_day->admin_notes }}@endisset</textarea>
                     </div>
                     <input type="hidden" name="state" value="1" />
-                    <button class="button d-print-none" type="submit">Ready To Pack? <i class="fas fa-check"></i></button>
+                    <button class="button d-print-none main-action" type="submit">Ready To Pack? <i class="fas fa-check"></i></button>
                     @break
 
                 @case('Ready To Pack')
@@ -78,7 +78,7 @@
                         <textarea name="packing_notes" id="packing_notes" class="" rows="8" placeholder="Enter anything relevant from the process of packing the trucks.">@isset($market_day->packing_notes){{ $market_day->packing_notes }}@endisset</textarea>
                     </div>
                     <input type="hidden" name="state" value="2" />
-                    <button class="button d-print-none" type="submit">Truck is packed <i class="fas fa-check"></i></button>
+                    <button class="button d-print-none main-action" type="submit">Truck is packed <i class="fas fa-check"></i></button>
                     @break
 
                 @case('Packed')
@@ -110,7 +110,7 @@
                         <textarea name="market_notes" id="market_notes" class="" rows="8" placeholder="Enter any relevant notes or comments from the Market day.">@isset($market_day->market_notes){{ $market_day->market_notes }}@endisset</textarea>
                     </div>
                     <input type="hidden" name="state" value="3" />
-                    <button class="button d-print-none" type="submit">Mark as Returned <i class="fas fa-check"></i></button>
+                    <button class="button d-print-none main-action" type="submit">Mark as Returned <i class="fas fa-check"></i></button>
 
                     @break
 
@@ -154,7 +154,7 @@
                     </section>                       
                     <input type="hidden" name="state" value="4" />
                     <section>
-                        <button class="button d-print-none" type="submit">Complete this Market! <i class="fas fa-check"></i></button>
+                        <button class="button d-print-none main-action" type="submit">Complete this Market! <i class="fas fa-check"></i></button>
                     </section>
 
                     @break
@@ -199,7 +199,7 @@
                     </section>                     
                     <input type="hidden" name="state" value="4" />
                     <section>
-                        <button class="button d-print-none" type="submit">Save <i class="fas fa-check"></i></button>
+                        <button class="button d-print-none main-action" type="submit">Save <i class="fas fa-check"></i></button>
                     </section>
 
                     @break

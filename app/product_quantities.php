@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use App\product_quantities;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,8 @@ class product_quantities extends Model
     {        
         return $this->belongsTo('App\Products', 'product_id');
     }
+
+    
 
 }
 

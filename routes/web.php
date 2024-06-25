@@ -42,7 +42,10 @@ Route::get('/products/{product}', 'ProductsController@show')->name('products.sho
     ->middleware('auth');
 Route::get('/products/{product}/edit', 'ProductsController@edit')
     ->middleware('auth');
-Route::put('/products/{product}', 'ProductsController@update');
+// Route::put('/products/{product}', 'ProductsController@update')
+// ->middleware('auth');
+Route::put('/products/{id}/edit', 'ProductsController@update')
+->middleware('auth');
 Route::delete('products/{product}', 'ProductsController@destroy');
 
 // Route for categories index and individual (edit) pages

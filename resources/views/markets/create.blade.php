@@ -75,7 +75,7 @@
           
           <div class="field">
             <div class="control">
-              <button class="button" type="submit">Create Market</button>
+              <button class="button main-action" type="submit">Create Market</button>
             </div>
 
           </div>

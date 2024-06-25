@@ -595,11 +595,11 @@ section.products {
   margin: 2rem 0 4rem 0;
 }
 
-form.market_day_edit button,
-form.edit button,
-a.button,
+form.market_day_edit button.main-action,
+form.edit button.main-action,
+a.button.main-action,
 .setup button.save,
-.authentication form button {
+.authentication form button.main-action {
   position: fixed;
   bottom: 1.3rem;
   right: 1rem;

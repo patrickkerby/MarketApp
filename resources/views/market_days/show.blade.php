@@ -106,7 +106,7 @@
                 </form>
             </div>
             
-            <a class="button" href="/market_days/{{$market_day->id}}/edit"><i class="far fa-edit"></i> Edit</a>
+            <a class="button main-action" href="/market_days/{{$market_day->id}}/edit"><i class="far fa-edit"></i> Edit</a>
 
         </footer>
         <div class="notes collapse row no-gutters justify-content-center" id="notes">
