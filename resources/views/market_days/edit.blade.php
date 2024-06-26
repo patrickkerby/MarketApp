@@ -28,6 +28,7 @@
             @switch($market_day->state)
                 @case('Draft')
                     <ul class="card-list employee">
+                        <li class="card"><label for="date">Date:</label> <input name="date" id="date" type="date" @isset($market_day->date) value="{{ $market_day->date }}" @endisset /></li>
                         <li class="card"><label for="employee">Market Employee(s):</label> <input name="employee" id="employee" type="text" @isset($market_day->employee) value="{{ $market_day->employee }}" @endisset /></li>
                     </ul>  
                     <section class="products">
@@ -57,6 +58,7 @@
                         <p class="col-9">This market is ready to be packed. If any product are unavailable, or any changes to the numbers below need to be made, adjust them before you continue.</p>
                     </div>
                     <ul class="card-list employee">
+                        <li class="card"><label for="date">Date:</label> <input name="date" id="date" type="date" @isset($market_day->date) value="{{ $market_day->date }}" @endisset /></li>
                         <li class="card"><label for="employee">Market Employee(s):</label> <input name="employee" id="employee" type="text" @isset($market_day->employee) value="{{ $market_day->employee }}" @endisset /></li>
                     </ul>  
                     <section class="products">
@@ -86,6 +88,7 @@
                         <p class="col-9">Now that market is over, count how many of each product is leftover, and report it below!</p>
                     </div>
                     <ul class="card-list employee">
+                        <li class="card"><label for="date">Date:</label> <input name="date" id="date" type="date" @isset($market_day->date) value="{{ $market_day->date }}" @endisset /></li>
                         <li class="card"><label for="employee">Market Employee(s):</label> <input name="employee" id="employee" type="text" @isset($market_day->employee) value="{{ $market_day->employee }}" @endisset /></li>
                     </ul>  
                     <section class="products">

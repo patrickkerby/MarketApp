@@ -338,6 +338,7 @@ class MarketDaysController extends Controller
         $admin_notes = $request->admin_notes;
         $packing_notes = $request->packing_notes;
         $market_notes = $request->market_notes;
+        $date = $request->date;
         
         // $weather = new Weather();
         // $currentWeather = json_decode($weather->get('edmonton,ca'));
@@ -387,6 +388,9 @@ class MarketDaysController extends Controller
         }
         if($employee) {
             $market_day->employee = $employee;
+        }
+        if($date) {
+            $market_day->date = $date;
         }
         if($actual_revenue) {
             $market_day->actual_revenue = $actual_revenue;
