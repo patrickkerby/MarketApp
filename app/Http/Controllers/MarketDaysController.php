@@ -102,7 +102,7 @@ class MarketDaysController extends Controller
 
         $product_quantity_items = $market_day->product_quantities()->get();  
   
-        $products = $market_day->products()->get();
+        $products = $market_day->products()->get(); 
 
         if($market_day->admin_notes || $market_day->packing_notes || $market_day->market_notes) {
             $has_notes = true;            

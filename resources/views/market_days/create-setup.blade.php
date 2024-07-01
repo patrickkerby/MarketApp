@@ -32,10 +32,12 @@
             <h3>{{$key}}:</h3>                  
               <ul class="card-list">
                 @foreach($item as $item)
-                  <li class="card">
-                    <strong><input type="checkbox" name="product[]" value="{{ $item->id }}" id="product-{{ $item->id }}" @if($products_session && in_array($item->id, $products_session)) checked @endif /> </strong>
-                    <label for="product-{{ $item->id }}">{{ $item->name }}</label>
-                  </li>
+                  @unless ($item->archived == true)
+                    <li class="card">
+                      <strong><input type="checkbox" name="product[]" value="{{ $item->id }}" id="product-{{ $item->id }}" @if($products_session && in_array($item->id, $products_session)) checked @endif /> </strong>
+                      <label for="product-{{ $item->id }}">{{ $item->name }}</label>
+                    </li>
+                  @endunless
                 @endforeach
               </ul>
             @endforeach       
