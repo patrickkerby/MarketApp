@@ -118,6 +118,9 @@
                     @break
 
                 @case('Returned')
+                @php 
+                    $username = Auth::user()->name;
+                @endphp
                     <ul>
                         @if ($market_day->employee)
                         <li>
@@ -125,10 +128,12 @@
                             {{ $market_day->employee ?? '' }}
                         </li>
                         @endif
-                        <li>
-                            <strong>Estimated Revenue:</strong>
-                            ${{ $market_day->estimated_revenue }}
-                        </li>
+                        @if($username != "Staff")
+                            <li>
+                                <strong>Estimated Revenue:</strong>
+                                ${{ $market_day->estimated_revenue }}
+                            </li>
+                        @endif
                     </ul>
                     <ul class="card-list">
                         <li class="card small revenue">
