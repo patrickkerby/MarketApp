@@ -11,6 +11,19 @@ define('LARAVEL_START', microtime(true));
 
 /*
 |--------------------------------------------------------------------------
+| Suppress Deprecation Notices in Output
+|--------------------------------------------------------------------------
+|
+| Laravel 8 vendor packages emit PHP 8.4 deprecation notices. When
+| display_errors is on, those get prepended to HTML and JSON responses,
+| breaking DataTables and AJAX calls on local dev.
+|
+*/
+
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
+/*
+|--------------------------------------------------------------------------
 | Register The Auto Loader
 |--------------------------------------------------------------------------
 |

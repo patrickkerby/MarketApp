@@ -12,7 +12,7 @@ class market_days extends Model
 
     public function market()
     {        
-        return $this->belongsTo('App\Markets', 'market_id');
+        return $this->belongsTo('App\Markets', 'market_id')->withTrashed();
     }
 
     public function product_quantities()

@@ -139,7 +139,7 @@
                         <li class="card small revenue">
                             <label for="actual_revnue">Actual Revenue:</label>
                             <span class="prefix">$</span>
-                            <input name="actual_revenue" id="actual_revenue" type="number" @isset($market_day->actual_revenue) value="{{ $market_day->actual_revenue }}" @endisset />
+                            <input name="actual_revenue" id="actual_revenue" type="number" step="0.01" @isset($market_day->actual_revenue) value="{{ $market_day->actual_revenue }}" @endisset />
                         </li>                        
                     </ul>  
                     <section class="products">
@@ -184,7 +184,7 @@
                         <li class="card small revenue">
                             <label for="actual_revnue">Actual Revenue:</label>
                             <span class="prefix">$</span>
-                            <input name="actual_revenue" id="actual_revenue" type="number" @isset($market_day->actual_revenue) value="{{ $market_day->actual_revenue }}" @endisset />
+                            <input name="actual_revenue" id="actual_revenue" type="number" step="0.01" @isset($market_day->actual_revenue) value="{{ $market_day->actual_revenue }}" @endisset />
                         </li>                        
                     </ul> 
                     <section class="products">

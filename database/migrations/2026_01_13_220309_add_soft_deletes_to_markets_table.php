@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSoftDeletes extends Migration
+class AddSoftDeletesToMarketsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class AddSoftDeletes extends Migration
      */
     public function up()
     {
-        Schema::table('products', function ($table) {
-            // Check if column doesn't exist before adding
-            if (!Schema::hasColumn('products', 'deleted_at')) {
-                $table->softDeletes();
-            }
+        Schema::table('markets', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -28,6 +25,8 @@ class AddSoftDeletes extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('markets', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 }

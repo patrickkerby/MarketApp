@@ -10,10 +10,6 @@
         <img class="logo" src="{{ asset('images/logo.svg') }}" alt="Riverbend Gardens flower logo" />
       </header>
 
-      @can ('view_completed_market_days')
-        <h1>TEST</h1>
-      @endcan
-
       @foreach ($market_days as $state => $items)
 
         @unless($state == 4)

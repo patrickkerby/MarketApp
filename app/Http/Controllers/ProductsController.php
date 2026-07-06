@@ -13,17 +13,11 @@ class ProductsController extends Controller
 {
     public function index()
     {
-        $categorized_products = Products::with('categories')->get()->sortBy('categories.name')->groupBy('categories.name');        
+        $products = Products::with('categories')->orderBy('name')->get();
+        $categorized_products = $products->groupBy('categories.name');
         $keys = $categorized_products->keys();
-        $products = products::latest()->get();
-        $products = $products->sortBy('name');
-        $products->values()->all();
 
-        return view('products.index', [
-            'categorized_products' => $categorized_products,
-            'keys' => $keys,
-            'products' => $products
-        ]);
+        return view('products.index', compact('categorized_products', 'keys', 'products'));
     }
 
     public function show(Products $product)

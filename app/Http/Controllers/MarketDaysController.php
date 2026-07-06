@@ -15,85 +15,81 @@ use Yajra\Datatables\Datatables;
 
 class MarketDaysController extends Controller
 {
-    public function index(Market_Days $market_day)
+    private $defaultAnalyticsYear;
+
+    public function index()
     {
-        $market_days = market_days::all()->sortBy('state');
-        $market_days = $market_days->groupBy('state');
-        
+        $market_days = market_days::with('market')
+            ->where('state', '!=', 4)
+            ->orderByDesc('date')
+            ->get()
+            ->groupBy('state');
+
         return view('market_days.index', compact('market_days'));
     }
 
     public function completedindex(Markets $markets)
     {
-        $markets = Markets::all()->sortBy('name');
-        return view('market_days.completed-index', compact('markets'));
+        // Include archived markets for filtering historical data
+        $markets = Markets::withTrashed()->get()->sortBy('name');
+        
+        // Get distinct years from completed market days
+        $years = market_days::where('state', 4)
+            ->selectRaw('DISTINCT YEAR(date) as year')
+            ->orderByRaw('year DESC')
+            ->pluck('year')
+            ->filter(function($year) {
+                return $year > 1000 && $year <= date('Y') + 1; // Filter out bad data
+            });
+        
+        $defaultYear = $years->first() ?? now()->year;
+
+        return view('market_days.completed-index', compact('markets', 'years', 'defaultYear'));
     }
 
     public function getdata(Request $request)
     {
-        $completed_markets = market_days::select('id', 'market_id', 'date', 'actual_revenue')->where('state', 4);
-        
-        if ($request->ajax()) {
-            return DataTables::of($completed_markets) 
-                ->addColumn('name', function(Market_Days $market_day) {
-                    return $market_day->market->name;
-                })  
-                ->addColumn('action', function($completed_markets) {
-                    $market_day_id = $completed_markets->id;
-                    $market_day_url = "<a href=\"/market_days/".$market_day_id."/edit\">Details</a>";
-                    return $market_day_url;
-                })
-                ->editColumn('date', function ($completed_markets) {
-                    $date = $completed_markets->date;
-                    $formatted_date = \Carbon\Carbon::parse($date)->format('F j, Y');
-                    
-                    return $formatted_date; // human readable format
-                })
-                ->editColumn('actual_revenue', function ($request) {
-                    
-                    $actual_revenue = $request->actual_revenue;
-                    $actual_revenue_formatted = "$".$actual_revenue;
+        $completed_markets = market_days::query()
+            ->select('market_days.id', 'market_days.date', 'market_days.actual_revenue', 'markets.name')
+            ->join('markets', 'market_days.market_id', '=', 'markets.id')
+            ->where('market_days.state', 4);
 
-                    return $actual_revenue_formatted; // human readable format
-                })
-                ->filter(function ($instance) use ($request) {
-                    
-                    $year = $request->get('year');
-                    $month = $request->get('month');
-                    $market = $request->get('market');
-                    
-                    if ( $market && $month) {
-                        $instance
-                        ->where('date', 'like', ''.$year .'%')
-                        ->where('date', 'like', '%'.$month .'%')
-                        ->where('market_id', 'like', $market);
-                    }
-                    elseif ($market && !$month) {
-                        $instance
-                        ->where('date', 'like', ''.$year .'%')
-                        ->where('market_id', 'like', $market.'%');
-                    }
-                    elseif ( $month ) {
-                        $instance
-                        ->where('date', 'like', ''.$year .'%')
-                        ->where('date', 'like', '%'.$month .'%');
-                    }  
-                    else {
-                        $instance
-                        ->where('date', 'like', ''.$year .'%');
-                    }
-                })
-                ->make(true);          
-        }
-        else {
-            return DataTables::of($completed_markets)
-            ->addColumn('name', function(Market_Days $market_day) {
-                return $market_day->market->name;
+        return DataTables::of($completed_markets)
+            ->addColumn('name', function ($row) {
+                return $row->name;
             })
+            ->addColumn('action', function ($row) {
+                return '<a href="/market_days/' . $row->id . '/edit">Details</a>';
+            })
+            ->editColumn('date', function ($row) {
+                return \Carbon\Carbon::parse($row->date)->format('F j, Y');
+            })
+            ->editColumn('actual_revenue', function ($row) {
+                return '$' . $row->actual_revenue;
+            })
+            ->filter(function ($query) use ($request) {
+                $year = $request->get('year');
+                if (!$year) {
+                    $year = market_days::where('state', 4)
+                        ->selectRaw('MAX(YEAR(date)) as year')
+                        ->value('year');
+                }
+
+                if ($year) {
+                    $query->where('market_days.date', '>=', $year . '-01-01')
+                        ->where('market_days.date', '<=', $year . '-12-31');
+                }
+
+                if ($month = $request->get('month')) {
+                    $query->whereMonth('market_days.date', (int) trim($month, '-'));
+                }
+
+                if ($market = $request->get('market')) {
+                    $query->where('market_days.market_id', $market);
+                }
+            })
+            ->rawColumns(['action'])
             ->make(true);
-        }
-        
-        return view('market_days.completed-index');
     }
 
     public function show(Market_Days $market_day)
@@ -407,7 +403,6 @@ class MarketDaysController extends Controller
         else {
             return redirect()->back();
         }
-        $market_day->update($this->validateMarket_Days());
     }
 
     protected function validateMarket_Days()
@@ -438,6 +433,541 @@ class MarketDaysController extends Controller
         $market_day->delete();
 
         return redirect('/market_days');
+    }
+
+    public function getOverviewAnalytics(Request $request)
+    {
+        $marketGroups = $this->marketGroupsForRequest($request);
+
+        return response()->json([
+            'summary' => $this->buildAnalyticsSummary($request, $marketGroups),
+            'markets' => $this->buildMarketPerformance($request, $marketGroups),
+            'products' => $this->buildProductAnalytics($request),
+        ]);
+    }
+
+    public function getAnalyticsSummary(Request $request)
+    {
+        return response()->json($this->buildAnalyticsSummary($request));
+    }
+
+    public function getMarketPerformance(Request $request)
+    {
+        return response()->json($this->buildMarketPerformance($request));
+    }
+
+    public function getProductAnalytics(Request $request)
+    {
+        return response()->json($this->buildProductAnalytics($request));
+    }
+
+    /**
+     * Get monthly trend data for line chart
+     */
+    public function getMonthlyTrends(Request $request)
+    {
+        $year = $request->get('year');
+        $marketId = $request->get('market');
+        
+        // Get available years for multi-year comparison
+        $availableYears = market_days::where('state', 4)
+            ->selectRaw('DISTINCT YEAR(date) as year')
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+        
+        $monthlyData = [];
+        $monthNames = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 
+            5 => 'May', 6 => 'Jun', 7 => 'Jul', 8 => 'Aug',
+            9 => 'Sep', 10 => 'Oct', 11 => 'Nov', 12 => 'Dec'
+        ];
+        
+        // If a year is selected, show that year's monthly data
+        // If no year, show the last 2 years for comparison
+        $yearsToShow = $year ? [$year] : array_slice($availableYears, 0, 2);
+        
+        foreach ($yearsToShow as $y) {
+            $yearData = [];
+            
+            for ($month = 1; $month <= 12; $month++) {
+                $query = market_days::where('state', 4)
+                    ->whereYear('date', $y)
+                    ->whereMonth('date', $month);
+                
+                if ($marketId) {
+                    $query->where('market_id', $marketId);
+                }
+                
+                $revenue = $query->sum('actual_revenue') ?: 0;
+                $count = $query->count();
+                
+                $yearData[] = [
+                    'month' => $month,
+                    'month_name' => $monthNames[$month],
+                    'revenue' => round($revenue, 2),
+                    'market_days' => $count,
+                    'avg_per_day' => $count > 0 ? round($revenue / $count, 2) : 0
+                ];
+            }
+            
+            $monthlyData[$y] = $yearData;
+        }
+        
+        return response()->json([
+            'monthly_data' => $monthlyData,
+            'available_years' => $availableYears
+        ]);
+    }
+
+    /**
+     * Get year-over-year comparison data
+     */
+    public function getYearOverYearData(Request $request)
+    {
+        $marketId = $request->get('market');
+        
+        // Get all completed years
+        $years = market_days::where('state', 4)
+            ->selectRaw('DISTINCT YEAR(date) as year')
+            ->orderBy('year', 'asc')
+            ->pluck('year')
+            ->toArray();
+        
+        $yearlyData = [];
+        
+        foreach ($years as $year) {
+            $query = market_days::where('state', 4)
+                ->whereYear('date', $year);
+            
+            if ($marketId) {
+                $query->where('market_id', $marketId);
+            }
+            
+            $marketDays = $query->get();
+            
+            $totalRevenue = $marketDays->sum('actual_revenue') ?: 0;
+            $count = $marketDays->count();
+            
+            $yearlyData[] = [
+                'year' => $year,
+                'total_revenue' => round($totalRevenue, 2),
+                'market_days' => $count,
+                'avg_per_day' => $count > 0 ? round($totalRevenue / $count, 2) : 0
+            ];
+        }
+        
+        // Calculate year-over-year changes
+        for ($i = 1; $i < count($yearlyData); $i++) {
+            $prevRevenue = $yearlyData[$i - 1]['total_revenue'];
+            $currentRevenue = $yearlyData[$i]['total_revenue'];
+            
+            if ($prevRevenue > 0) {
+                $yearlyData[$i]['yoy_change'] = round(
+                    (($currentRevenue - $prevRevenue) / $prevRevenue) * 100,
+                    1
+                );
+            } else {
+                $yearlyData[$i]['yoy_change'] = $currentRevenue > 0 ? 100 : 0;
+            }
+        }
+        
+        return response()->json([
+            'yearly_data' => $yearlyData
+        ]);
+    }
+
+    /**
+     * Get profit margin and profitability analysis by market
+     */
+    public function getProfitabilityAnalysis(Request $request)
+    {
+        $year = $request->get('year') ?: now()->year;
+        
+        // Get all markets with completed market days
+        $markets = \App\Markets::withTrashed()->get();
+        
+        $profitabilityData = [];
+        
+        foreach ($markets as $market) {
+            $marketDays = market_days::where('state', 4)
+                ->where('market_id', $market->id)
+                ->whereYear('date', $year)
+                ->get();
+            
+            if ($marketDays->count() === 0) continue;
+            
+            $totalRevenue = $marketDays->sum('actual_revenue') ?: 0;
+            $daysCount = $marketDays->count();
+            
+            // Calculate expenses
+            $laborCostPerDay = 0;
+            if ($market->typical_employees && $market->typical_hours && $market->avg_wage) {
+                $laborCostPerDay = $market->typical_employees * $market->typical_hours * $market->avg_wage;
+            }
+            
+            $stallCostPerDay = $market->annual_stall_fee ? ($market->annual_stall_fee / max($daysCount, 1)) : 0;
+            $otherCostPerDay = $market->annual_other_fees ? ($market->annual_other_fees / max($daysCount, 1)) : 0;
+            
+            $totalLaborCost = $laborCostPerDay * $daysCount;
+            $totalStallCost = $market->annual_stall_fee ?: 0;
+            $totalOtherCost = $market->annual_other_fees ?: 0;
+            $totalExpenses = $totalLaborCost + $totalStallCost + $totalOtherCost;
+            
+            $netProfit = $totalRevenue - $totalExpenses;
+            $profitMargin = $totalRevenue > 0 ? ($netProfit / $totalRevenue) * 100 : 0;
+            
+            $hasOperationalData = ($market->typical_employees || $market->annual_stall_fee || $market->annual_other_fees);
+            
+            $profitabilityData[] = [
+                'market_id' => $market->id,
+                'market_name' => $market->name,
+                'is_archived' => $market->deleted_at !== null,
+                'has_operational_data' => $hasOperationalData,
+                'total_revenue' => round($totalRevenue, 2),
+                'market_days' => $daysCount,
+                'avg_per_day' => round($totalRevenue / $daysCount, 2),
+                'labor_cost' => round($totalLaborCost, 2),
+                'stall_cost' => round($totalStallCost, 2),
+                'other_cost' => round($totalOtherCost, 2),
+                'total_expenses' => round($totalExpenses, 2),
+                'net_profit' => round($netProfit, 2),
+                'profit_margin' => round($profitMargin, 1),
+                'revenue_per_labor_dollar' => $totalLaborCost > 0 ? round($totalRevenue / $totalLaborCost, 2) : null
+            ];
+        }
+        
+        // Sort by profit margin (descending)
+        usort($profitabilityData, function($a, $b) {
+            return $b['profit_margin'] <=> $a['profit_margin'];
+        });
+        
+        // Summary stats
+        $marketsWithData = array_filter($profitabilityData, fn($m) => $m['has_operational_data']);
+        $marketsWithoutData = array_filter($profitabilityData, fn($m) => !$m['has_operational_data']);
+        
+        return response()->json([
+            'markets' => $profitabilityData,
+            'summary' => [
+                'total_markets' => count($profitabilityData),
+                'markets_with_cost_data' => count($marketsWithData),
+                'markets_missing_cost_data' => count($marketsWithoutData),
+                'total_revenue' => round(array_sum(array_column($profitabilityData, 'total_revenue')), 2),
+                'total_expenses' => round(array_sum(array_column($profitabilityData, 'total_expenses')), 2),
+                'total_net_profit' => round(array_sum(array_column($profitabilityData, 'net_profit')), 2),
+            ]
+        ]);
+    }
+
+    private function analyticsYearForRequest(Request $request)
+    {
+        if ($year = $request->get('year')) {
+            return (int) $year;
+        }
+
+        if ($this->defaultAnalyticsYear === null) {
+            $this->defaultAnalyticsYear = (int) (market_days::where('state', 4)
+                ->selectRaw('MAX(YEAR(date)) as year')
+                ->value('year') ?? now()->year);
+        }
+
+        return $this->defaultAnalyticsYear;
+    }
+
+    private function applyDateFilters($query, Request $request)
+    {
+        $year = $request->get('year');
+        if ($year) {
+            $query->where('date', '>=', $year . '-01-01')
+                ->where('date', '<=', $year . '-12-31');
+        } else {
+            $defaultYear = $this->analyticsYearForRequest($request);
+            $query->where('date', '>=', $defaultYear . '-01-01')
+                ->where('date', '<=', $defaultYear . '-12-31');
+        }
+
+        if ($month = $request->get('month')) {
+            $query->whereMonth('date', (int) trim($month, '-'));
+        }
+
+        if ($marketId = $request->get('market')) {
+            $query->where('market_id', $marketId);
+        }
+
+        return $query;
+    }
+
+    private function completedMarketDaysQuery(Request $request)
+    {
+        return $this->applyDateFilters(market_days::query()->where('state', 4), $request);
+    }
+
+    private function marketDayCountsForExpenseYear($expenseYear)
+    {
+        return market_days::where('state', 4)
+            ->whereYear('date', $expenseYear)
+            ->groupBy('market_id')
+            ->selectRaw('market_id, COUNT(*) as day_count')
+            ->pluck('day_count', 'market_id');
+    }
+
+    private function calculateExpensesForMarketGroups($marketGroups, $expenseYear)
+    {
+        if ($marketGroups->isEmpty()) {
+            return 0;
+        }
+
+        $marketDayCountsByMarket = $this->marketDayCountsForExpenseYear($expenseYear);
+        $markets = Markets::withTrashed()
+            ->whereIn('id', $marketGroups->pluck('market_id'))
+            ->get()
+            ->keyBy('id');
+
+        $totalExpenses = 0;
+
+        foreach ($marketGroups as $group) {
+            $market = $markets->get($group->market_id);
+            if (!$market) {
+                continue;
+            }
+
+            $laborCostPerDay = 0;
+            if ($market->typical_employees && $market->typical_hours && $market->avg_wage) {
+                $laborCostPerDay = $market->typical_employees * $market->typical_hours * $market->avg_wage;
+            }
+
+            $totalMarketDaysThisYear = $marketDayCountsByMarket->get($group->market_id, 0);
+            $stallCostPerDay = 0;
+            $otherCostPerDay = 0;
+
+            if ($totalMarketDaysThisYear > 0) {
+                if ($market->annual_stall_fee) {
+                    $stallCostPerDay = $market->annual_stall_fee / $totalMarketDaysThisYear;
+                }
+                if ($market->annual_other_fees) {
+                    $otherCostPerDay = $market->annual_other_fees / $totalMarketDaysThisYear;
+                }
+            }
+
+            $totalExpenses += ($laborCostPerDay + $stallCostPerDay + $otherCostPerDay) * $group->day_count;
+        }
+
+        return $totalExpenses;
+    }
+
+    private function marketGroupsForRequest(Request $request)
+    {
+        return $this->completedMarketDaysQuery($request)
+            ->selectRaw('market_id, COUNT(*) as day_count, SUM(actual_revenue) as total_revenue, SUM(estimated_revenue) as estimated_revenue')
+            ->groupBy('market_id')
+            ->get();
+    }
+
+    private function buildAnalyticsSummary(Request $request, $marketGroups = null)
+    {
+        $year = $request->get('year') ?: $this->analyticsYearForRequest($request);
+        $month = $request->get('month');
+        $monthNum = $month ? (int) trim($month, '-') : null;
+        $marketId = $request->get('market');
+
+        $stats = $this->completedMarketDaysQuery($request)
+            ->selectRaw('COUNT(*) as market_count, COALESCE(SUM(actual_revenue), 0) as total_revenue, COALESCE(AVG(actual_revenue), 0) as avg_revenue, COALESCE(SUM(estimated_revenue), 0) as estimated_revenue')
+            ->first();
+
+        $marketGroups = $marketGroups ?? $this->marketGroupsForRequest($request);
+        $totalRevenue = (float) $stats->total_revenue;
+        $totalExpenses = $this->calculateExpensesForMarketGroups($marketGroups, $year);
+
+        $summary = [
+            'total_revenue' => $totalRevenue,
+            'avg_revenue' => round($stats->avg_revenue, 2),
+            'market_count' => (int) $stats->market_count,
+            'estimated_revenue' => (float) $stats->estimated_revenue,
+            'total_expenses' => round($totalExpenses, 2),
+            'net_sales' => round($totalRevenue - $totalExpenses, 2),
+            'expense_percent' => $totalRevenue > 0 ? round(($totalExpenses / $totalRevenue) * 100, 2) : 0,
+        ];
+
+        if ($summary['estimated_revenue'] > 0) {
+            $summary['variance_amount'] = $summary['total_revenue'] - $summary['estimated_revenue'];
+            $summary['variance_percent'] = round(
+                ($summary['variance_amount'] / $summary['estimated_revenue']) * 100,
+                2
+            );
+        } else {
+            $summary['variance_amount'] = 0;
+            $summary['variance_percent'] = 0;
+        }
+
+        if ($year) {
+            $prevQuery = market_days::where('state', 4)->whereYear('date', $year - 1);
+
+            if ($monthNum) {
+                $prevQuery->whereMonth('date', $monthNum);
+            }
+            if ($marketId) {
+                $prevQuery->where('market_id', $marketId);
+            }
+
+            $prevStats = (clone $prevQuery)
+                ->selectRaw('COUNT(*) as market_count, COALESCE(SUM(actual_revenue), 0) as total_revenue, COALESCE(AVG(actual_revenue), 0) as avg_revenue')
+                ->first();
+
+            $prevRevenue = (float) $prevStats->total_revenue;
+            $prevAvg = (float) $prevStats->avg_revenue;
+
+            $summary['yoy_revenue_change'] = $prevRevenue > 0
+                ? round((($summary['total_revenue'] - $prevRevenue) / $prevRevenue) * 100, 1)
+                : 0;
+            $summary['yoy_avg_change'] = $prevAvg > 0
+                ? round((($summary['avg_revenue'] - $prevAvg) / $prevAvg) * 100, 1)
+                : 0;
+            $summary['yoy_count_change'] = $summary['market_count'] - (int) $prevStats->market_count;
+        }
+
+        return $summary;
+    }
+
+    private function buildMarketPerformance(Request $request, $marketGroups = null)
+    {
+        $year = $request->get('year') ?: $this->analyticsYearForRequest($request);
+        $marketGroups = $marketGroups ?? $this->marketGroupsForRequest($request);
+        $marketDayCountsByMarket = $this->marketDayCountsForExpenseYear($year);
+        $markets = Markets::withTrashed()
+            ->whereIn('id', $marketGroups->pluck('market_id'))
+            ->get()
+            ->keyBy('id');
+
+        $marketPerformance = $marketGroups->map(function ($group) use ($markets, $marketDayCountsByMarket) {
+            $market = $markets->get($group->market_id);
+            $totalRevenue = (float) $group->total_revenue;
+            $marketCount = (int) $group->day_count;
+            $totalExpenses = 0;
+
+            if ($market) {
+                $laborCostPerDay = 0;
+                if ($market->typical_employees && $market->typical_hours && $market->avg_wage) {
+                    $laborCostPerDay = $market->typical_employees * $market->typical_hours * $market->avg_wage;
+                }
+
+                $totalMarketDaysThisYear = $marketDayCountsByMarket->get($group->market_id, 0);
+                $stallCostPerDay = 0;
+                $otherCostPerDay = 0;
+
+                if ($totalMarketDaysThisYear > 0) {
+                    if ($market->annual_stall_fee) {
+                        $stallCostPerDay = $market->annual_stall_fee / $totalMarketDaysThisYear;
+                    }
+                    if ($market->annual_other_fees) {
+                        $otherCostPerDay = $market->annual_other_fees / $totalMarketDaysThisYear;
+                    }
+                }
+
+                $totalExpenses = ($laborCostPerDay + $stallCostPerDay + $otherCostPerDay) * $marketCount;
+            }
+
+            return [
+                'market_name' => $market ? $market->name : 'Unknown',
+                'total_revenue' => $totalRevenue,
+                'market_count' => $marketCount,
+                'avg_revenue' => $marketCount > 0 ? round($totalRevenue / $marketCount, 2) : 0,
+                'total_expenses' => round($totalExpenses, 2),
+                'net_sales' => round($totalRevenue - $totalExpenses, 2),
+                'estimated_revenue' => (float) $group->estimated_revenue,
+                'variance' => round($totalRevenue - (float) $group->estimated_revenue, 2),
+            ];
+        })->sortByDesc('total_revenue')->values();
+
+        $grandTotal = $marketPerformance->sum('total_revenue');
+        $marketPerformance = $marketPerformance->map(function ($market) use ($grandTotal) {
+            $market['percent_of_total'] = $grandTotal > 0 ? round(($market['total_revenue'] / $grandTotal) * 100, 2) : 0;
+            return $market;
+        });
+
+        return [
+            'markets' => $marketPerformance,
+            'grand_total' => $grandTotal,
+        ];
+    }
+
+    private function buildProductAnalytics(Request $request)
+    {
+        $year = $request->get('year') ?: $this->analyticsYearForRequest($request);
+        $month = $request->get('month');
+        $marketId = $request->get('market');
+
+        $productData = \DB::table('product_quantities')
+            ->join('products', 'product_quantities.product_id', '=', 'products.id')
+            ->join('market_days', 'product_quantities.market_day_id', '=', 'market_days.id')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->where('market_days.state', 4)
+            ->where('market_days.date', '>=', $year . '-01-01')
+            ->where('market_days.date', '<=', $year . '-12-31')
+            ->when($month, function ($query) use ($month) {
+                $query->whereMonth('market_days.date', (int) trim($month, '-'));
+            })
+            ->when($marketId, function ($query) use ($marketId) {
+                $query->where('market_days.market_id', $marketId);
+            })
+            ->whereNull('products.deleted_at')
+            ->select(
+                'products.id',
+                'products.name',
+                'products.price',
+                'categories.name as category_name',
+                \DB::raw('SUM(product_quantities.packed - COALESCE(product_quantities.returned, 0)) as total_quantity'),
+                \DB::raw('SUM((product_quantities.packed - COALESCE(product_quantities.returned, 0)) * products.price) as total_revenue'),
+                \DB::raw('COUNT(DISTINCT product_quantities.market_day_id) as market_day_count'),
+                \DB::raw('COUNT(DISTINCT market_days.market_id) as market_count')
+            )
+            ->groupBy('products.id', 'products.name', 'products.price', 'categories.name')
+            ->havingRaw('SUM(product_quantities.packed - COALESCE(product_quantities.returned, 0)) > 0')
+            ->orderByDesc('total_revenue')
+            ->get();
+
+        $products = $productData->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'category' => $product->category_name,
+                'unit_price' => round($product->price, 2),
+                'total_quantity' => round($product->total_quantity, 2),
+                'total_revenue' => round($product->total_revenue, 2),
+                'avg_price' => $product->total_quantity > 0 ? round($product->total_revenue / $product->total_quantity, 2) : 0,
+                'market_day_count' => $product->market_day_count,
+                'market_count' => $product->market_count,
+            ];
+        });
+
+        $grandTotal = $products->sum('total_revenue');
+
+        $products = $products->map(function ($product) use ($grandTotal) {
+            $product['percent_of_total'] = $grandTotal > 0 ? round(($product['total_revenue'] / $grandTotal) * 100, 2) : 0;
+            return $product;
+        });
+
+        $categoriesData = $products->groupBy('category')->map(function ($categoryProducts, $categoryName) use ($grandTotal) {
+            $categoryRevenue = $categoryProducts->sum('total_revenue');
+            $categoryQuantity = $categoryProducts->sum('total_quantity');
+
+            return [
+                'category' => $categoryName,
+                'total_quantity' => round($categoryQuantity, 2),
+                'total_revenue' => round($categoryRevenue, 2),
+                'product_count' => $categoryProducts->count(),
+                'market_count' => $categoryProducts->max('market_count'),
+                'market_day_count' => $categoryProducts->max('market_day_count'),
+                'percent_of_total' => $grandTotal > 0 ? round(($categoryRevenue / $grandTotal) * 100, 2) : 0,
+                'products' => $categoryProducts->values()->all(),
+            ];
+        })->sortByDesc('total_revenue')->values();
+
+        return [
+            'products' => $products,
+            'categories' => $categoriesData,
+            'grand_total' => $grandTotal,
+            'total_products' => $products->count(),
+        ];
     }
 
 }

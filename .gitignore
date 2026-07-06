@@ -5,8 +5,26 @@
 /vendor
 .env
 .env.backup
+.env.production
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+
+# OS files
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# Local database dumps (sensitive — never commit)
+/laravel.sql
+/laravel.gz
+*.sql.gz
+
+# Local planning / review notes (not for production repo)
+ANALYTICS_ENHANCEMENT_PLAN.md
+CODE_ISSUES_REPORT.md
+PROJECT_REVIEW_SUMMARY.md
+QUICK_START_IMPLEMENTATION.md
+SYSTEM_DOCUMENTATION.md

@@ -3,25 +3,24 @@
   <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-      <meta name="apple-mobile-web-app-capable" content="yes" /> 
+      <meta name="apple-mobile-web-app-capable" content="yes" />
 
       <!-- CSRF Token -->
       <meta name="csrf-token" content="{{ csrf_token() }}">
 
-      <title>Riverbend Gardens Market Appasdfas</title>
+      <title>Riverbend Gardens Market App</title>
 
-      <!-- Scripts -->
-      <script src="//code.jquery.com/jquery.js"></script>
-      <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
-      <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-      <script src="{{ asset('js/app.js') }}" defer></script>
+      <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+      <link rel="preconnect" href="https://kit.fontawesome.com" crossorigin>
 
       <!-- Fonts -->
       <link rel="stylesheet" href="https://use.typekit.net/thb0pbt.css">
-      <script src="https://kit.fontawesome.com/0e629dcd9e.js" crossorigin="anonymous"></script>
+      <script src="https://kit.fontawesome.com/0e629dcd9e.js" crossorigin="anonymous" defer></script>
 
       <!-- Styles -->
       <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+      @stack('head')
   </head>
   <body class="@yield('class')">
 
@@ -29,8 +28,8 @@
       <!-- Collapsed Hamburger -->
       <div class="collapse navbar-collapse" id="app-navbar-collapse">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
-          <i class="fas fa-chevron-right"></i>  
-          <span class="sr-only">Toggle Navigation</span>                    
+          <i class="fas fa-chevron-right"></i>
+          <span class="sr-only">Toggle Navigation</span>
         </button>
         <!-- Left Side Of Navbar -->
         <ul class="nav navbar-nav">
@@ -73,10 +72,15 @@
         </div>
       </div>
     </nav>
-                
+
   <div class="content row justify-content-center">
     @yield('content')
   </div>
-  
+
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script src="{{ asset('js/app.js') }}"></script>
+  @stack('scripts')
+
   </body>
 </html>

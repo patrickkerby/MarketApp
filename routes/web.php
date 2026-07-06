@@ -31,6 +31,9 @@ Route::get('/markets/{market}', 'MarketsController@show')->name('markets.show')
 Route::get('/markets/{market}/edit', 'MarketsController@edit')
 ->middleware('auth');
 Route::put('/markets/{market}', 'MarketsController@update');
+Route::delete('/markets/{market}', 'MarketsController@destroy');
+Route::delete('/markets/{market}/archive', 'MarketsController@archive')->name('markets.archive');
+Route::post('/markets/{id}/restore', 'MarketsController@restore')->name('markets.restore');
 
 // Route for products index and individual pages
 Route::get('/products', 'ProductsController@index')
@@ -73,6 +76,13 @@ Route::get('/market_days', 'MarketDaysController@index')
 //testing
 Route::get('/market_days/completed', 'MarketDaysController@completedindex')->name('completed-index');
 Route::get('/market_days/completed/getdata', 'MarketDaysController@getdata')->name('completed-index.getdata');
+Route::get('/market_days/analytics/overview', 'MarketDaysController@getOverviewAnalytics')->name('market_days.analytics.overview');
+Route::get('/market_days/analytics/summary', 'MarketDaysController@getAnalyticsSummary')->name('market_days.analytics.summary');
+Route::get('/market_days/analytics/market-performance', 'MarketDaysController@getMarketPerformance')->name('market_days.analytics.market-performance');
+Route::get('/market_days/analytics/product-performance', 'MarketDaysController@getProductAnalytics')->name('market_days.analytics.product-performance');
+Route::get('/market_days/analytics/monthly-trends', 'MarketDaysController@getMonthlyTrends')->name('market_days.analytics.monthly-trends');
+Route::get('/market_days/analytics/year-over-year', 'MarketDaysController@getYearOverYearData')->name('market_days.analytics.year-over-year');
+Route::get('/market_days/analytics/profitability', 'MarketDaysController@getProfitabilityAnalysis')->name('market_days.analytics.profitability');
 
 
 Route::get('/market_days/create-setup', 'MarketDaysController@createStep1')
