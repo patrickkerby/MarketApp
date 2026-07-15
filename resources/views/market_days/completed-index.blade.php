@@ -271,7 +271,7 @@
         </div>
         
         <!-- Tab Content: Markets -->
-        <div class="tab-content active" id="tab-markets">
+        <div class="tab-content" id="tab-markets">
             <div class="section">
                 <div class="section-header">
                     <div>
@@ -377,7 +377,7 @@
         </div>
         
         <!-- Tab Content: Details -->
-        <div class="tab-content" id="tab-details">
+        <div class="tab-content active" id="tab-details">
             <div class="section">
                 <div class="section-header">
                     <div>
