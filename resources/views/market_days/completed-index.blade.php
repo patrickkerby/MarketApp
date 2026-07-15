@@ -1295,7 +1295,8 @@
             loadedTabs.products = true;
         }
 
-        // Only load overview tab data on initial page load
+        // Load default tab (details) and summary cards on initial page load
+        loadTabData('details');
         loadTabData('overview');
 
         // Toggle view buttons
