@@ -128,12 +128,12 @@
                             {{ $market_day->employee ?? '' }}
                         </li>
                         @endif
-                        @if($username != "Staff")
+                        {{-- @if($username != "Staff")
                             <li>
                                 <strong>Estimated Revenue:</strong>
                                 ${{ $market_day->estimated_revenue }}
                             </li>
-                        @endif
+                        @endif --}}
                     </ul>
                     <ul class="card-list">
                         <li class="card small revenue">
@@ -175,10 +175,12 @@
                             {{ $market_day->employee ?? '' }}
                         </li>
                         @endif
+                        {{-- @if($username != "Staff")
                         <li>
                             <strong>Estimated Revenue:</strong>
                             ${{ $market_day->estimated_revenue }}
-                        </li>                        
+                        </li> 
+                        @endif --}}
                     </ul>
                     <ul class="card-list">
                         <li class="card small revenue">

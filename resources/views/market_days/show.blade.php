@@ -31,9 +31,9 @@
             @if($market_day->employee)
                 <li><strong>Employee:</strong> {{ $market_day->employee }}</li>
             @endif                            
-            @if($market_day->estimated_revenue)
+            {{-- @if($market_day->estimated_revenue)
                 <li><strong>Estimated Revenue:</strong> ${{ $market_day->estimated_revenue }}</li>
-            @endif
+            @endif --}}
             @if($market_day->actual_revenue)
                 <li><strong>Actual Revenue:</strong> ${{ $market_day->actual_revenue }}</li>
             @endif
