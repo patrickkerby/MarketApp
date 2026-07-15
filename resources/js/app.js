@@ -13,18 +13,28 @@ if (typeof jQuery !== 'undefined') {
       window.print();
     });
 
-    $(document).click(function(e) {
+    // Close footer/options panels when clicking outside — never touch the main navbar
+    $(document).on('click', function(e) {
       var $target = $(e.target);
 
       if ($target.closest('[data-toggle="collapse"]').length) {
         return;
       }
 
-      if ($target.closest('.collapse.in, .collapse.show').length) {
-        return;
-      }
+      // Defer so Bootstrap 3 finishes its toggle on the same click
+      setTimeout(function() {
+        if ($target.closest('[data-toggle="collapse"]').length) {
+          return;
+        }
 
-      $('.collapse').collapse('hide');
+        if ($target.closest('.collapse.in').length) {
+          return;
+        }
+
+        $('#notes, #market_day_options, #product_options, #additionalNav')
+          .filter('.in')
+          .collapse('hide');
+      }, 0);
     });
   });
 }

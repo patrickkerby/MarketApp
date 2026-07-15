@@ -112,7 +112,10 @@
         
         <!-- Tabs Navigation -->
         <div class="tabs-navigation">
-            <button class="tab-button active" data-tab="overview">
+            <button class="tab-button active" data-tab="details">
+                <i class="fas fa-table"></i> All Market Days
+            </button>
+            <button class="tab-button" data-tab="overview">
                 <i class="fas fa-chart-pie"></i> Overview
             </button>
             <button class="tab-button" data-tab="trends">
@@ -127,13 +130,11 @@
             <button class="tab-button" data-tab="products">
                 <i class="fas fa-shopping-basket"></i> Products
             </button>
-            <button class="tab-button" data-tab="details">
-                <i class="fas fa-table"></i> All Market Days
-            </button>
+            
         </div>
         
         <!-- Tab Content: Overview -->
-        <div class="tab-content active" id="tab-overview">
+        <div class="tab-content" id="tab-overview">
             <div class="chart-grid">
                 <div class="chart-box">
                     <h4>Revenue by Market</h4>
@@ -270,7 +271,7 @@
         </div>
         
         <!-- Tab Content: Markets -->
-        <div class="tab-content" id="tab-markets">
+        <div class="tab-content active" id="tab-markets">
             <div class="section">
                 <div class="section-header">
                     <div>
