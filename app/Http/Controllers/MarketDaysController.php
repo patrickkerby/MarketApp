@@ -6,6 +6,7 @@ use App\market_days;
 use App\Markets;
 use App\product_quantities;
 use App\Products;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 // use GNAHotelSolutions\Weather\Weather;
@@ -183,7 +184,7 @@ class MarketDaysController extends Controller
         $markets = $request->market;
         $products = $request->product;
 
-        $request->session()->put('markets', $markets);
+        $request->session()->put('markets', $this->normalizeMarketsSession($markets ?? []));
         $request->session()->put('products', $products);
 
         return redirect('/market_days/create');
@@ -196,7 +197,10 @@ class MarketDaysController extends Controller
         $data = $request->session()->all();
         $markets_session = $request->session()->get('markets');
         $products_session = $request->session()->get('products');
-        $markets = $request->session()->get('markets');
+        $markets = $this->normalizeMarketsSession($request->session()->get('markets', []));
+        if ($markets) {
+            $request->session()->put('markets', $markets);
+        }
         $product_quantities = $request->session()->get('product_quantities');
         $products = Products::find($products_session);
 
@@ -224,7 +228,7 @@ class MarketDaysController extends Controller
 
             case 'save':
 
-                $request->session()->put('markets', $markets);
+                $request->session()->put('markets', $this->normalizeMarketsSession($markets ?? []));
                 $request->session()->put('product_quantities', $product_quantities);
                
                 return redirect('/market_days/create');
@@ -240,31 +244,39 @@ class MarketDaysController extends Controller
 
             case 'publish':
 
-                foreach($markets as $item) {
-                    
-                    if($item['name']) {
-                        $market_day = new market_days();
-            
-                        $market_day->market_id = $item['market_id'];
-                        $market_day->date = $item['date'];
-                        $market_day->admin_notes = $item['admin_notes'];
-                        $market_day->state = 1;
-            
-                        $market_day->save();
-                    
-                        foreach($product_quantities as $qty) {                
-                            if($qty['market_id'] == $item['market_id']) {
+                foreach ($markets as $item) {
+                    if (empty($item['name'])) {
+                        continue;
+                    }
 
-                                $product_quantity = new product_quantities();
-            
-                                $product_quantity->product_id = $qty['product_id'];
-                                $product_quantity->packed = $qty['packed'];
-            
-                                $product_quantity->market_days()->associate($market_day);
-                    
-                                $product_quantity->save();
+                    $date = $this->normalizeMarketDayDate($item['date'] ?? null);
+                    if (!$date) {
+                        return redirect()->back()->withInput()->withErrors([
+                            'market.date' => 'Please enter a valid date for ' . $item['name'] . '.',
+                        ]);
+                    }
 
-                            }
+                    $market_day = new market_days();
+            
+                    $market_day->market_id = $item['market_id'];
+                    $market_day->date = $date;
+                    $market_day->admin_notes = $item['admin_notes'];
+                    $market_day->state = 1;
+            
+                    $market_day->save();
+                    
+                    foreach ($product_quantities as $qty) {                
+                        if ($qty['market_id'] == $item['market_id']) {
+
+                            $product_quantity = new product_quantities();
+            
+                            $product_quantity->product_id = $qty['product_id'];
+                            $product_quantity->packed = $qty['packed'];
+            
+                            $product_quantity->market_days()->associate($market_day);
+                    
+                            $product_quantity->save();
+
                         }
                     }
                 }                
@@ -386,7 +398,7 @@ class MarketDaysController extends Controller
             $market_day->employee = $employee;
         }
         if($date) {
-            $market_day->date = $date;
+            $market_day->date = $this->normalizeMarketDayDate($date) ?? $date;
         }
         if($actual_revenue) {
             $market_day->actual_revenue = $actual_revenue;
@@ -408,7 +420,7 @@ class MarketDaysController extends Controller
     protected function validateMarket_Days()
     {
         return request()->validate([
-            'date' => 'required',
+            'date' => 'required|date_format:Y-m-d',
             'employee' =>'nullable',
             'state' => 'required',
             'admin_notes' => 'nullable',
@@ -416,6 +428,40 @@ class MarketDaysController extends Controller
             'market_notes' => 'nullable',
             'actual_revenue' => 'nullable'
         ]);
+    }
+
+    private function normalizeMarketDayDate($date): ?string
+    {
+        if ($date === null || $date === '') {
+            return null;
+        }
+
+        $date = trim((string) $date);
+
+        // Fix corrupted dates like 202607-02-03 (extra month digits after year)
+        if (preg_match('/^(\d{4})\d{2}-(\d{2})-(\d{2})$/', $date, $matches)) {
+            $date = $matches[1] . '-' . $matches[2] . '-' . $matches[3];
+        }
+
+        try {
+            return Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    private function normalizeMarketsSession(array $markets): array
+    {
+        foreach ($markets as $key => $market) {
+            if (!empty($market['date'])) {
+                $normalized = $this->normalizeMarketDayDate($market['date']);
+                if ($normalized) {
+                    $markets[$key]['date'] = $normalized;
+                }
+            }
+        }
+
+        return $markets;
     }
 
     // states are saved to the database as numbers, use these when referencing in objects
