@@ -83,11 +83,11 @@
             </section>            
             
             <footer>
-                <a class="util options_trigger" data-toggle="collapse" href="#market_day_options" role="button" aria-expanded="false" aria-controls="market_day_options">
+                <a class="util options_trigger" href="#market_day_options" role="button" aria-controls="market_day_options">
                     <i class="fas fa-cogs"></i>
                 </a>
                 
-                <div class="collapse" id="market_day_options">
+                <div class="footer-panel" id="market_day_options">
                   <button class="print-window revert">
                     <i class="fas fa-print"></i> Print
                   </button>

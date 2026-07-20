@@ -84,10 +84,10 @@
 
   </div>
   <footer>
-    <a class="util options_trigger" data-toggle="collapse" href="#product_options" role="button" aria-expanded="false" aria-controls="product_options">
-      <i class="fas fa-cogs"></i>
+    <a class="util options_trigger" href="#product_options" role="button" aria-controls="product_options">
+    <i class="fas fa-cogs"></i>
     </a>
-    <div class="collapse" id="product_options">
+    <div class="footer-panel" id="product_options">
       @if($deleteable)
       <form method="POST" action="/products/{{ $product->id }}"" onsubmit="return confirm('Are you sure you want to delete this product?')"> 
         {{  csrf_field() }}

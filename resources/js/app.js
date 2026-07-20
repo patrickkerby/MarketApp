@@ -13,31 +13,28 @@ if (typeof jQuery !== 'undefined') {
       window.print();
     });
 
-    // Close footer/options panels on outside click — never touch the main navbar
-    var footerPanelSelector = '#notes, #market_day_options, #product_options, #additionalNav';
+    // Footer panels use a simple class toggle — not Bootstrap collapse,
+    // which shares the .collapse class with the main navbar and causes flashing.
+    $('.notes_trigger, .options_trigger').on('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
 
-    $(footerPanelSelector).on('shown.bs.collapse', function() {
-      var $panel = $(this);
+      var $panel = $($(this).attr('href'));
+      var willOpen = !$panel.hasClass('is-open');
 
-      setTimeout(function() {
-        $(document).one('click.footerPanelClose', function(e) {
-          var $target = $(e.target);
+      $('.footer-panel.is-open').removeClass('is-open');
 
-          if ($target.closest('[data-toggle="collapse"][href="#' + $panel.attr('id') + '"]').length) {
-            return;
-          }
-
-          if ($target.closest('#' + $panel.attr('id')).length) {
-            return;
-          }
-
-          $panel.collapse('hide');
-        });
-      }, 0);
+      if (willOpen) {
+        $panel.addClass('is-open');
+      }
     });
 
-    $(footerPanelSelector).on('hidden.bs.collapse', function() {
-      $(document).off('click.footerPanelClose');
+    $(document).on('click', function(e) {
+      if ($(e.target).closest('.notes_trigger, .options_trigger, .footer-panel, footer').length) {
+        return;
+      }
+
+      $('.footer-panel.is-open').removeClass('is-open');
     });
   });
 }

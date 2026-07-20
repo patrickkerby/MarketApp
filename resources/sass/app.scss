@@ -174,8 +174,7 @@ textarea {
     right: 5px;
     transform: rotate(0deg);
     width: 1.5rem;
-
-    @include slowfade(0.2);
+    transition: transform 0.2s ease;
   }
 
   a {
@@ -205,13 +204,12 @@ textarea {
     display: flex;
     width: 4%;
     box-shadow: $box-shadow-dark;
-    // padding: 0.5rem;
     height: 60px;
     box-shadow: 0 0 21px -5px rgba(203,203,203,0.72);
     border-radius: 0 8px 8px 0;
     left: -95%;
     background: #fff;
-    @include slowfade(0.2);
+    transition: left 0.2s ease;
 
 
     &.show,
@@ -234,8 +232,7 @@ textarea {
         height: 100%;
         transform: rotate(180deg);
         width: unset;
-  
-        @include slowfade(0.2);
+        transition: transform 0.2s ease;
       }
 
       .hamburg {
@@ -712,6 +709,11 @@ footer {
     padding: 0 0.75rem 0.5rem 0.75rem;
     text-align: center;
     width: 14rem;
+    display: none;
+
+    &.is-open {
+      display: block;
+    }
 
     &::after {
       top: 100%;
@@ -727,7 +729,8 @@ footer {
       margin-left: -10px;
     }    
 
-    .show & {
+    .show &,
+    .in & {
       left: 4.25rem;
     }
 
@@ -773,6 +776,11 @@ footer {
   padding: 2rem 0 7rem 0;
   font-size: 16px;
   box-shadow: $box-shadow;
+  display: none;
+
+  &.is-open {
+    display: flex;
+  }
 
   strong {
     color: $green;

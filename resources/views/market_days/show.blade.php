@@ -89,13 +89,13 @@
         </table>
     </div>
     <footer>
-        <a class="util notes_trigger @if($has_notes)has_notes @endif" data-toggle="collapse" href="#notes" role="button" aria-expanded="false" aria-controls="notes">
+        <a class="util notes_trigger @if($has_notes)has_notes @endif" href="#notes" role="button" aria-controls="notes">
                 <i class="far fa-comment-dots"></i>
-            </a>
-            <a class="util options_trigger" data-toggle="collapse" href="#market_day_options" role="button" aria-expanded="false" aria-controls="market_day_options">
+        </a>
+            <a class="util options_trigger" href="#market_day_options" role="button" aria-controls="market_day_options">
                 <i class="fas fa-cogs"></i>
             </a>
-            <div class="collapse" id="market_day_options">
+            <div class="footer-panel" id="market_day_options">
                 <button class="print-window">
                     <i class="fas fa-print"></i> Print
                 </button>
@@ -109,7 +109,7 @@
             <a class="button main-action" href="/market_days/{{$market_day->id}}/edit"><i class="far fa-edit"></i> Edit</a>
 
         </footer>
-        <div class="notes collapse row no-gutters justify-content-center" id="notes">
+        <div class="notes footer-panel row no-gutters justify-content-center" id="notes">
             @if($market_day->admin_notes)
                 <div class="col-sm-8">
                     <strong>Admin Notes:</strong>

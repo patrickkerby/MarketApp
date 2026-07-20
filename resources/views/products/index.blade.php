@@ -28,10 +28,10 @@
 
   </div>
   <footer>
-    <a class="util options_trigger" data-toggle="collapse" href="#product_options" role="button" aria-expanded="false" aria-controls="product_options">
-      <i class="fas fa-cogs"></i>
+    <a class="util options_trigger" href="#product_options" role="button" aria-controls="product_options">
+    <i class="fas fa-cogs"></i>
     </a>
-    <div class="collapse panel-body" id="product_options">
+    <div class="footer-panel panel-body" id="product_options">
         <a class="secondary-action" href="#" data-toggle="modal" data-target="#archivedProducts">Archived Products</a>
     </div>
     <a href="/products/create" class="button main-action">Add new product</a>
