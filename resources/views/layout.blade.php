@@ -18,7 +18,7 @@
       <script src="https://kit.fontawesome.com/0e629dcd9e.js" crossorigin="anonymous" defer></script>
 
       <!-- Styles -->
-      <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+      <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
       @stack('head')
   </head>
@@ -79,7 +79,7 @@
 
   <script src="//code.jquery.com/jquery.js"></script>
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  <script src="{{ asset('js/app.js') }}"></script>
+  <script src="{{ mix('js/app.js') }}"></script>
   @stack('scripts')
 
   </body>

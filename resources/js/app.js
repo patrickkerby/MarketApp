@@ -13,28 +13,31 @@ if (typeof jQuery !== 'undefined') {
       window.print();
     });
 
-    // Close footer/options panels when clicking outside — never touch the main navbar
-    $(document).on('click', function(e) {
-      var $target = $(e.target);
+    // Close footer/options panels on outside click — never touch the main navbar
+    var footerPanelSelector = '#notes, #market_day_options, #product_options, #additionalNav';
 
-      if ($target.closest('[data-toggle="collapse"]').length) {
-        return;
-      }
+    $(footerPanelSelector).on('shown.bs.collapse', function() {
+      var $panel = $(this);
 
-      // Defer so Bootstrap 3 finishes its toggle on the same click
       setTimeout(function() {
-        if ($target.closest('[data-toggle="collapse"]').length) {
-          return;
-        }
+        $(document).one('click.footerPanelClose', function(e) {
+          var $target = $(e.target);
 
-        if ($target.closest('.collapse.in').length) {
-          return;
-        }
+          if ($target.closest('[data-toggle="collapse"][href="#' + $panel.attr('id') + '"]').length) {
+            return;
+          }
 
-        $('#notes, #market_day_options, #product_options, #additionalNav')
-          .filter('.in')
-          .collapse('hide');
+          if ($target.closest('#' + $panel.attr('id')).length) {
+            return;
+          }
+
+          $panel.collapse('hide');
+        });
       }, 0);
+    });
+
+    $(footerPanelSelector).on('hidden.bs.collapse', function() {
+      $(document).off('click.footerPanelClose');
     });
   });
 }
