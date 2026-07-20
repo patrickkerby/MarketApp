@@ -166,7 +166,7 @@
                     <div class="chart-container">
                         <canvas id="monthlyTrendChart"></canvas>
                     </div>
-                </div>
+                </div> 
             </div>
             
             <div class="section" style="margin-top: 30px;">
