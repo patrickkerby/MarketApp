@@ -198,7 +198,7 @@ class MarketDaysController extends Controller
     public function discardWizardDraft(Request $request)
     {
         $this->clearWizardDraft();
-        $request->session()->flush();
+        $this->clearWizardSession($request);
 
         return redirect('/market_days/create-setup')->with('success', 'Saved setup discarded.');
     }
@@ -253,7 +253,7 @@ class MarketDaysController extends Controller
 
             case 'cancel':
                 $this->clearWizardDraft();
-                $request->session()->flush();
+                $this->clearWizardSession($request);
                 return redirect('/market_days/create-setup');
 
             case 'publish':
@@ -296,7 +296,7 @@ class MarketDaysController extends Controller
                 }                
         
                 $this->clearWizardDraft();
-                $request->session()->flush();
+                $this->clearWizardSession($request);
 
                 return redirect('/market_days');
 
@@ -538,6 +538,11 @@ class MarketDaysController extends Controller
             $products,
             $productQuantities ?? $request->session()->get('product_quantities', [])
         );
+    }
+
+    private function clearWizardSession(Request $request): void
+    {
+        $request->session()->forget(['markets', 'products', 'product_quantities']);
     }
 
     private function clearWizardDraft(): void
