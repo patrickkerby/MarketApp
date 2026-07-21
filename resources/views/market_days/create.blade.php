@@ -95,9 +95,9 @@
                   <button class="print-window revert">
                     <i class="fas fa-print"></i> Print
                   </button>
-                  <button class="cancel revert" type="submit" name="action" value="cancel">Cancel</button>
-                  <button class="revert" type="submit" name="action" value="save">Save Draft</button>
-                  <button class="revert edit" type="submit" name="action" value="save_and_edit"><i class="far fa-edit"></i> Edit</button>
+                  <button class="cancel revert" type="submit" name="action" value="cancel" formnovalidate>Cancel</button>
+                  <button class="revert" type="submit" name="action" value="save" formnovalidate>Save Draft</button>
+                  <button class="revert edit" type="submit" name="action" value="save_and_edit" formnovalidate><i class="far fa-edit"></i> Edit</button>
                 </div>
             </footer>
           </form>
