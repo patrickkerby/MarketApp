@@ -78,7 +78,12 @@
       @endcan --}}
 
       <div>
-        <a href="/market_days/create-setup" class="button main-action">Add new market day</a>
+        @if($wizardDraft)
+          <a href="/market_days/create" class="button main-action">Resume market day setup</a>
+          <a href="/market_days/create-setup" class="button">Add new market day</a>
+        @else
+          <a href="/market_days/create-setup" class="button main-action">Add new market day</a>
+        @endif
       </div>
       <footer></footer>
     </div>

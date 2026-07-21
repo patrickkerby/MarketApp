@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\market_days;
+use App\MarketDayWizardDraft;
 use App\Markets;
 use App\product_quantities;
 use App\Products;
@@ -26,7 +27,9 @@ class MarketDaysController extends Controller
             ->get()
             ->groupBy('state');
 
-        return view('market_days.index', compact('market_days'));
+        $wizardDraft = $this->getWizardDraft();
+
+        return view('market_days.index', compact('market_days', 'wizardDraft'));
     }
 
     public function completedindex(Markets $markets)
@@ -143,6 +146,7 @@ class MarketDaysController extends Controller
      */
     public function createStep1(Request $request)
     {
+        $this->hydrateWizardSession($request);
 
         $markets = Markets::latest()->get();
         $markets = $markets->sortBy('$markets');
@@ -157,10 +161,9 @@ class MarketDaysController extends Controller
 
         $markets_session = $request->session()->get('markets');
         $products_session = $request->session()->get('products');
+        $wizardDraft = $this->getWizardDraft();
 
         $data = $request->session()->all();
-
-        // $request->session()->flush();
 
         return view('market_days.create-setup', [
             'markets' => $markets,
@@ -169,6 +172,7 @@ class MarketDaysController extends Controller
             'keys' => $keys,
             'markets_session' => $markets_session,
             'products_session' => $products_session,
+            'wizardDraft' => $wizardDraft,
             'data' => $data
         ]);
     }
@@ -177,23 +181,34 @@ class MarketDaysController extends Controller
     // Post Request to store step1 info in session, then redirect to the product quantities step     
     public function postCreateStep1(Request $request)
     {
+        $markets = $this->normalizeMarketsSession($request->market ?? []);
+        $products = $request->product ?? [];
+        $productQuantities = $this->getWizardDraft()?->product_quantities
+            ?? $request->session()->get('product_quantities', []);
 
-        $request->session()->forget('markets');
-        $request->session()->forget('products');
-
-        $markets = $request->market;
-        $products = $request->product;
-
-        $request->session()->put('markets', $this->normalizeMarketsSession($markets ?? []));
+        $request->session()->put('markets', $markets);
         $request->session()->put('products', $products);
+        $request->session()->put('product_quantities', $productQuantities);
+
+        $this->persistWizardDraft($markets, $products, $productQuantities);
 
         return redirect('/market_days/create');
+    }
+
+    public function discardWizardDraft(Request $request)
+    {
+        $this->clearWizardDraft();
+        $request->session()->flush();
+
+        return redirect('/market_days/create-setup')->with('success', 'Saved setup discarded.');
     }
 
 
     // Show the step 2 Form for creating a new Market Day.
     public function createStep2(Request $request)
     {
+        $this->hydrateWizardSession($request);
+
         $data = $request->session()->all();
         $markets_session = $request->session()->get('markets');
         $products_session = $request->session()->get('products');
@@ -227,20 +242,19 @@ class MarketDaysController extends Controller
         switch ($request->input('action')) {
 
             case 'save':
+            case 'save_and_edit':
+                $this->saveWizardDraftToSessionAndDatabase($request, $markets ?? [], $product_quantities);
 
-                $request->session()->put('markets', $this->normalizeMarketsSession($markets ?? []));
-                $request->session()->put('product_quantities', $product_quantities);
-               
-                return redirect('/market_days/create');
-                
-            break;
+                if ($request->input('action') === 'save_and_edit') {
+                    return redirect('/market_days/create-setup')->with('success', 'Draft saved.');
+                }
+
+                return redirect('/market_days/create')->with('success', 'Draft saved');
 
             case 'cancel':
-
+                $this->clearWizardDraft();
                 $request->session()->flush();
                 return redirect('/market_days/create-setup');
-
-            break;
 
             case 'publish':
 
@@ -281,6 +295,7 @@ class MarketDaysController extends Controller
                     }
                 }                
         
+                $this->clearWizardDraft();
                 $request->session()->flush();
 
                 return redirect('/market_days');
@@ -462,6 +477,76 @@ class MarketDaysController extends Controller
         }
 
         return $markets;
+    }
+
+    private function getWizardDraft(): ?MarketDayWizardDraft
+    {
+        if (!auth()->check()) {
+            return null;
+        }
+
+        return MarketDayWizardDraft::where('user_id', auth()->id())->first();
+    }
+
+    private function hydrateWizardSession(Request $request): void
+    {
+        if ($request->session()->has('markets') && $request->session()->has('products')) {
+            return;
+        }
+
+        $draft = $this->getWizardDraft();
+        if (!$draft) {
+            return;
+        }
+
+        $request->session()->put('markets', $this->normalizeMarketsSession($draft->markets ?? []));
+        $request->session()->put('products', $draft->products ?? []);
+        $request->session()->put('product_quantities', $draft->product_quantities ?? []);
+    }
+
+    private function persistWizardDraft(array $markets, array $products, ?array $productQuantities = null): void
+    {
+        if (!auth()->check()) {
+            return;
+        }
+
+        $draft = $this->getWizardDraft();
+
+        MarketDayWizardDraft::updateOrCreate(
+            ['user_id' => auth()->id()],
+            [
+                'markets' => $this->normalizeMarketsSession($markets),
+                'products' => array_values($products),
+                'product_quantities' => $productQuantities
+                    ?? ($draft ? ($draft->product_quantities ?? []) : []),
+            ]
+        );
+    }
+
+    private function saveWizardDraftToSessionAndDatabase(Request $request, array $markets, ?array $productQuantities): void
+    {
+        $normalizedMarkets = $this->normalizeMarketsSession($markets);
+        $products = $request->session()->get('products', []);
+
+        $request->session()->put('markets', $normalizedMarkets);
+        if ($productQuantities !== null) {
+            $request->session()->put('product_quantities', $productQuantities);
+        }
+
+        $this->persistWizardDraft(
+            $normalizedMarkets,
+            $products,
+            $productQuantities ?? $request->session()->get('product_quantities', [])
+        );
+    }
+
+    private function clearWizardDraft(): void
+    {
+        if (!auth()->check()) {
+            return;
+        }
+
+        MarketDayWizardDraft::where('user_id', auth()->id())->delete();
     }
 
     // states are saved to the database as numbers, use these when referencing in objects

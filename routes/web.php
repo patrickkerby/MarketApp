@@ -87,11 +87,14 @@ Route::get('/market_days/analytics/profitability', 'MarketDaysController@getProf
 
 Route::get('/market_days/create-setup', 'MarketDaysController@createStep1')
     ->middleware('auth');
+Route::get('/market_days/create-setup/discard', 'MarketDaysController@discardWizardDraft')
+    ->middleware('auth');
 Route::post('/market_days/create-setup', 'MarketDaysController@postCreateStep1')
     ->middleware('auth');
 Route::get('/market_days/create', 'MarketDaysController@createStep2')
     ->middleware('auth');
-Route::post('/market_days/create', 'MarketDaysController@store');
+Route::post('/market_days/create', 'MarketDaysController@store')
+    ->middleware('auth');
 Route::get('/market_days/{market_day}', 'MarketDaysController@show')->name('market_days.show')
     ->middleware('auth');
 Route::get('/market_days/{market_day}/edit', 'MarketDaysController@edit')

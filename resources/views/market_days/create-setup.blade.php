@@ -10,6 +10,18 @@
     <h1><span>Setup for</span> New Market Days</h1>
   </header>
 
+        @if (session('success'))
+          <p class="draft-notice">{{ session('success') }}</p>
+        @endif
+
+        @if ($wizardDraft)
+          <p class="draft-notice">
+            You have a saved setup from {{ $wizardDraft->updated_at->diffForHumans() }}.
+            <a href="/market_days/create">Continue to packing quantities</a>
+            · <a href="/market_days/create-setup/discard">Start over</a>
+          </p>
+        @endif
+
         <form method="POST">
           @csrf
           <h2>Select your Markets:</h2>

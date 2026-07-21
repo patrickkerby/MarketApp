@@ -8,6 +8,10 @@
       <h1><span>Setup for</span> New Market Days</h1>
     </header>
         
+        @if (session('success'))
+          <p class="draft-notice">{{ session('success') }}</p>
+        @endif
+
         @if ($markets && $products)
           <p>Assign quantities for each product, per market</p>          
           <form method="POST">
@@ -22,7 +26,7 @@
                       <td>
                         <h3>{{ $market['name'] }}</h3>
                         <div class="dateInput">
-                          <input type="date" name="market[{{ $key }}][date]" required @isset($market['date']) value="{{ $market['date'] }}" @endisset />
+                          <input type="date" name="market[{{ $key }}][date]" maxlength="10" required @isset($market['date']) value="{{ $market['date'] }}" @endisset />
                           <input type="hidden" name="market[{{ $key }}][name]" value="{{ $market['name'] }}" />
                           <input type="hidden" name="market[{{ $key }}][market_id]" value="{{ $key }}" />
                           <input type="hidden" name="market[{{ $key }}][state]" value="1" />                        
@@ -93,7 +97,7 @@
                   </button>
                   <button class="cancel revert" type="submit" name="action" value="cancel">Cancel</button>
                   <button class="revert" type="submit" name="action" value="save">Save Draft</button>
-                  <a href="create-setup" class="edit"><i class="far fa-edit"></i> Edit</a>
+                  <button class="revert edit" type="submit" name="action" value="save_and_edit"><i class="far fa-edit"></i> Edit</button>
                 </div>
             </footer>
           </form>

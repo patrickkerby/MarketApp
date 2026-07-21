@@ -532,6 +532,18 @@ header {
   }
 }
 
+.draft-notice {
+  background: #fff;
+  border-left: 4px solid $green;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 15px;
+
+  a {
+    color: $green;
+  }
+}
+
 // Product Table
 .show table,
 .setup table {
